@@ -36,8 +36,8 @@ function main() {
         $outputItems += $currentObject
     }
     Write-Output "Mapped VHDX and Users"
-    $outputItems | FT LastWriteTime, User, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
     $outputItems | Export-Csv MappedVHDXandUsers.csv
+    $outputItems | FT LastWriteTime, User, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
 
     Write-Output "Potentially Orphanned Files"
     $outputItems | Export-Csv PotentiallOrphannedFiles.csv
