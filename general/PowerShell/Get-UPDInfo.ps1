@@ -1,6 +1,3 @@
-# Author: Sheen Ismhael Lim
-# Usage: This script is prefered to be run on the server where the UPD (User Profile Disk) are hosted with ActiveDirectory Powershell Module Installed.
-
 param(
     [Parameter(HelpMessage="The path where the UPD's are located")]
     $updFolderPath 
@@ -25,7 +22,13 @@ function main() {
             $user = $(Get-ADUser -Identity $($vhdxFile.Name).ToLower().Replace("uvhd-","").Replace(".vhdx",""))
         } catch {
             Write-Output "Unable to locate a user with SID value '$($user)'"
-            $notExistingUser += $($vhdxFile).FullName
+            $orphanedFile = New-Object -TypeName PSObject
+            $orphanedFile | Add-Member -NotePropertyName LastWriteTime -NotePropertyValue $($vhdxFile.LastWriteTime)
+            $orphanedFile | Add-Member -NotePropertyName VHDFileName -NotePropertyValue $($vhdxFile.FullName)
+            $orphanedFile | Add-Member -NotePropertyName AllocatedSizeInGB -NotePropertyValue $($currentVHDObject.Size/1GB)
+            $orphanedFile | Add-Member -NotePropertyName FileActualSizeInGB -NotePropertyValue $($currentVHDObject.FileSize/1GB)
+
+            $notExistingUser += $orphanedFile
             Continue
         }
 
@@ -38,13 +41,14 @@ function main() {
 
         $outputItems += $currentObject
     }
+    
     Write-Output "Mapped VHDX and Users"
-    $outputItems | Export-Csv MappedVHDXandUsers.csv
-    $outputItems | FT LastWriteTime, User, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
+    $outputItems | Sort-Object FileActualSizeInGB | FT LastWriteTime, User, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
+    $outputItems | Export-Csv MappedVHDXandUsers.csv -Force
 
     Write-Output "Potentially Orphanned Files"
-    $outputItems | Export-Csv PotentiallOrphannedFiles.csv
-    $notExistingUser | FT FullName
+    $outputItems | Export-Csv PotentiallOrphannedFiles.csv -Force
+    $notExistingUser | FT LastWriteTime, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB
 
     
 }

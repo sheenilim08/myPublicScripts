@@ -22,10 +22,13 @@ function main() {
     }
 
     try {
+        Write-Output "Expanding disk '$($vDiskPath)' to $($newSizeInGB) - old Size $($userVDiskInGB)"
         Resize-VHD -Path $vDiskPath -SizeBytes $newSizeInGB
     } catch {
         Write-Output "An issue occured while expanding the virtual disk $($vDiskPath)."
     }
+
+    #need to know how to get partitions belonging to a disk/vdisk
 }
 
 main
