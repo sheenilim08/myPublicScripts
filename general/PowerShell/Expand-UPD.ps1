@@ -15,7 +15,7 @@ function main() {
     }
     
     $userVirtualDisk = Get-VHD -Path $vDiskPath
-    $userVDiskInGB = $($userVirtualDisk.Size/1GB;
+    $userVDiskInGB = $($userVirtualDisk.Size/1GB);
     if ($($userVDiskInGB) -ge $newSizeInGB) {
         Write-Output "The current size of the virtual disk is greater than or equal to the new requested size. Exiting Script."
         Exit;
