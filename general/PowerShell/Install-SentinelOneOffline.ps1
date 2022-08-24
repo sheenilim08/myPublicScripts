@@ -1,5 +1,8 @@
 # Author: Sheen Ismhael Lim
 # Usage: the msi installer must be accessible by the script. It can be a local path or a UNC path.
+# Example: ./Install-SentinelOneOffline.ps1 -siteToken "YOUR_SITE_TOKEN" -msiInstaller "\\File1.domain.local\Shares\SentinelInstaller.msi" -sha1Value "Expected SHA1 Hash value" -forceReboot $false
+# -siteToken and -sha1Value values must be retrieved from the Sentinel Portal
+# -siteToken can be a group token in the Sentinel Portal
 
 param(
     [Parameter(HelpMessage="The SITE Token on which the agent will belong to.")]
