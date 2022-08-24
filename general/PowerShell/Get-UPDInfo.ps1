@@ -19,9 +19,10 @@ function main() {
     foreach ($vhdxFile in $vhdxs) {
         $currentVHDObject = Get-VHD -Path $($vhdxFile).FullName
         try {
-            $user = $(Get-ADUser -Identity $($vhdxFile.Name).ToLower().Replace("uvhd-","").Replace(".vhdx",""))
+            $sid = $($vhdxFile.Name).ToLower().Replace("uvhd-","").Replace(".vhdx","")
+            $user = $(Get-ADUser -Identity $sid)
         } catch {
-            Write-Output "Unable to locate a user with SID value '$($user)'"
+            Write-Output "Unable to locate a user with SID value '$($sid)'"
             $orphanedFile = New-Object -TypeName PSObject
             $orphanedFile | Add-Member -NotePropertyName LastWriteTime -NotePropertyValue $($vhdxFile.LastWriteTime)
             $orphanedFile | Add-Member -NotePropertyName VHDFileName -NotePropertyValue $($vhdxFile.FullName)
