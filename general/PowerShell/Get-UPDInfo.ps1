@@ -1,3 +1,6 @@
+# Author: Sheen Ismhael Lim
+# Usage: This script is prefered to be run on the server where the UPD (User Profile Disk) are hosted with ActiveDirectory Powershell Module Installed.
+
 param(
     [Parameter(HelpMessage="The path where the UPD's are located")]
     $updFolderPath 
