@@ -1,3 +1,6 @@
+# Author: Sheen Ismhael Lim
+# Usage: the msi installer must be accessible by the script. It can be a local path or a UNC path.
+
 param(
     [Parameter(HelpMessage="The SITE Token on which the agent will belong to.")]
     $siteToken, 
