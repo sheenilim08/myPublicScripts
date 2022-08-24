@@ -23,7 +23,7 @@ function main() {
         if ($forceReboot) {
             $msiInstaller SITE_TOKEN=$($siteToken) /QUITE
         } else {
-            $msiInstaller SITE_TOKEN=$($siteToken) /QUITE
+            $msiInstaller SITE_TOKEN=$($siteToken) /QUITE /NORESTART
         }
     }
     #C:\Users\S1\Desktop\Sentinel\SentinelInstaller.msi SITE_TOKEN=<site_Token or group_Token> /QUIET /NORESTART
