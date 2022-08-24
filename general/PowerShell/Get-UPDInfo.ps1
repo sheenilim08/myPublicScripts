@@ -41,14 +41,14 @@ function main() {
 
         $outputItems += $currentObject
     }
-    
+
     Write-Output "Mapped VHDX and Users"
     $outputItems | Sort-Object FileActualSizeInGB | FT LastWriteTime, User, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
     $outputItems | Export-Csv MappedVHDXandUsers.csv -Force
 
     Write-Output "Potentially Orphanned Files"
-    $outputItems | Export-Csv PotentiallOrphannedFiles.csv -Force
-    $notExistingUser | FT LastWriteTime, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB
+    $notExistingUser | Export-Csv PotentiallOrphannedFiles.csv -Force
+    $notExistingUser | FT LastWriteTime, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
 
     
 }
