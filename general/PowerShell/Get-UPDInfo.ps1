@@ -18,28 +18,24 @@ function main() {
 
     foreach ($vhdxFile in $vhdxs) {
         $currentVHDObject = Get-VHD -Path $($vhdxFile).FullName
+
+        $currentObject = New-Object -TypeName PSObject
+
+        $currentObject | Add-Member -NotePropertyName LastWriteTime -NotePropertyValue $($vhdxFile.LastWriteTime)
+        $currentObject | Add-Member -NotePropertyName VHDFileName -NotePropertyValue $($vhdxFile.FullName)
+        $currentObject | Add-Member -NotePropertyName AllocatedSizeInGB -NotePropertyValue $($currentVHDObject.Size/1GB)
+        $currentObject | Add-Member -NotePropertyName FileActualSizeInGB -NotePropertyValue $($currentVHDObject.FileSize/1GB)
+
         try {
             $sid = $($vhdxFile.Name).ToLower().Replace("uvhd-","").Replace(".vhdx","")
             $user = $(Get-ADUser -Identity $sid)
         } catch {
             Write-Output "Unable to locate a user with SID value '$($sid)'"
-            $orphanedFile = New-Object -TypeName PSObject
-            $orphanedFile | Add-Member -NotePropertyName LastWriteTime -NotePropertyValue $($vhdxFile.LastWriteTime)
-            $orphanedFile | Add-Member -NotePropertyName VHDFileName -NotePropertyValue $($vhdxFile.FullName)
-            $orphanedFile | Add-Member -NotePropertyName AllocatedSizeInGB -NotePropertyValue $($currentVHDObject.Size/1GB)
-            $orphanedFile | Add-Member -NotePropertyName FileActualSizeInGB -NotePropertyValue $($currentVHDObject.FileSize/1GB)
-
-            $notExistingUser += $orphanedFile
+            $notExistingUser += $currentObject
             Continue
         }
-
-        $currentObject = New-Object -TypeName PSObject
-        $currentObject | Add-Member -NotePropertyName LastWriteTime -NotePropertyValue $($vhdxFile.LastWriteTime)
+        
         $currentObject | Add-Member -NotePropertyName User -NotePropertyValue $user.Name
-        $currentObject | Add-Member -NotePropertyName VHDFileName -NotePropertyValue $($vhdxFile.FullName)
-        $currentObject | Add-Member -NotePropertyName AllocatedSizeInGB -NotePropertyValue $($currentVHDObject.Size/1GB)
-        $currentObject | Add-Member -NotePropertyName FileActualSizeInGB -NotePropertyValue $($currentVHDObject.FileSize/1GB)
-
         $outputItems += $currentObject
     }
 
@@ -50,8 +46,6 @@ function main() {
     Write-Output "Potentially Orphanned Files"
     $notExistingUser | Export-Csv PotentiallOrphannedFiles.csv -Force
     $notExistingUser | FT LastWriteTime, VHDFileName, AllocatedSizeInGB, FileActualSizeInGB -AutoSize
-
-    
 }
 
 main
