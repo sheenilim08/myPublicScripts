@@ -1,5 +1,5 @@
 param(
-    [Parameter(HelpMessage="Add Resolution?")]
+    [Parameter(HelpMessage="Add Resolution? True if you want to add, False if you want to remove")]
     $addResolution = $true,
 
     [Parameter(HelpMessage="Name to Add/Remove to host file")]
