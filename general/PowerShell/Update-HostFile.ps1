@@ -19,11 +19,11 @@ function main() {
         Copy-Item -Path $originalHostFile -Destination $backupOfHostFile
 
         if ($addResolution) {
-            Write-Output "Adding Name Resolution: $($nameToAddToHostFile) -> $($ipToResolveNameTo)"
-            Add-Content $originalHostFile "$($nameToAddToHostFile)`t$($ipToResolveNameTo)"
+            Write-Output "Adding Name Resolution: $($ipToResolveNameTo) -> $($nameToAddToHostFile)"
+            Add-Content $originalHostFile "$($ipToResolveNameTo)`t$($nameToAddToHostFile)"
         } else {
-            Write-Output "Removing Name Resolution: $($nameToAddToHostFile) -> $($ipToResolveNameTo)"
-            $newContent = Select-String -Path "$($originalHostFile)" -Pattern "$($nameToAddToHostFile)`t$($ipToResolveNameTo)" -NotMatch | ForEach-Object { $_.Line }
+            Write-Output "Removing Name Resolution: $($ipToResolveNameTo) -> $($nameToAddToHostFile)"
+            $newContent = Select-String -Path "$($originalHostFile)" -Pattern "$($ipToResolveNameTo)`t$($nameToAddToHostFile)" -NotMatch | ForEach-Object { $_.Line }
             $newContent | Set-Content -Path "$($originalHostFile)"
         }
 
