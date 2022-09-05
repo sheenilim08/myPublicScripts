@@ -1,6 +1,6 @@
 param(
     [Parameter(HelpMessage="Freeze the current OS version")]
-    $enableUpgrade = $true,
+    $enableUpgrade = $true
 )
 
 function createTargetVersionKey() {
