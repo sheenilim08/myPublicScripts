@@ -1,5 +1,5 @@
 param(
-    [Parameter(HelpMessage="Enable Windows 11 Upgrade")]
+    [Parameter(HelpMessage="Enable Windows 10 Upgrade")]
     $enableUpgrade = $true,
 
     [Parameter(HelpMessage="Version of Windows 10 you want to stay to")]
