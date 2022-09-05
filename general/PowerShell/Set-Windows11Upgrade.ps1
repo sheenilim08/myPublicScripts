@@ -9,7 +9,7 @@ param(
 function createTargetVersionKey() {
     Write-Output "Setting TargetReleaseVersion"
 
-    $targetVersionEnabledSettingExist = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersion"
+    $targetVersionEnabledSettingExist = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersion" -ErrorAction SilentlyContinue
 
     if ($enableUpgrade) {
         $enableTargetVersion = 1
@@ -27,7 +27,7 @@ function createTargetVersionKey() {
 function createTargetVersionInfoKey() {
     Write-Output "Setting the highest version that the OS can update."
 
-    $targetVersionInfoExist = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersionInfo"
+    $targetVersionInfoExist = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersionInfo" -ErrorAction SilentlyContinue
 
     if ($targetVersionInfoExist -eq $null) {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersionInfo" -Value $($uptoVersion.ToUpper()) -Type "String"
