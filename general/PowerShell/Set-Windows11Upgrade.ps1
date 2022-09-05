@@ -50,7 +50,7 @@ function main() {
         createTargetVersionKey
         createTargetVersionInfoKey
     } else {
-        Write-Output "No changes applied, you are setting a version $($uptoVersion) that is currently a lower version than the running version $($winver.WindowsVersion)."
+        Write-Output "No changes applied, you are setting a version $($uptoVersion) that is currently a lower version than the running version $($winver)."
     }
 }
 
