@@ -34,6 +34,8 @@ function createTargetVersionInfoKey($currentWinVersion) {
 }
 
 function main() {
+    $winver = $null
+    
     if (Test-Path -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DisplayVersion") {
         $winver = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion).DisplayVersion
     } else {
