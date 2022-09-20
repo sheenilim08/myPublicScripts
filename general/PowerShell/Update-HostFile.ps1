@@ -27,8 +27,11 @@ function main() {
             $newContent | Set-Content -Path "$($originalHostFile)"
         }
 
+        return 0;
     } else {
         Write-Output "Unable to locate the system's host file. Exiting Script."
+
+        return 1;
     }
 }
 
