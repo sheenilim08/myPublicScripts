@@ -49,7 +49,9 @@ function main() {
     }
 
     createTargetVersionKey
-    createTargetVersionInfoKey -currentWinVersion $winver
+    if ($enableUpgrade) {
+        createTargetVersionInfoKey -currentWinVersion $winver
+    }
 }
 
 main
