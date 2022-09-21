@@ -10,7 +10,9 @@ param(
 )
 
 function createProductVersionInfo() {
-    if (-Not Test-Path -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\ProductVersion") {
+    $productVersionExist = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ProductVersion" -ErrorAction SilentlyContinue
+
+    if ($productVersionExist -eq $null) {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ProductVersion" -Value $productVersion -Type "String"
     } else {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ProductVersion" -Value $productVersion -Type "String"
