@@ -7,12 +7,8 @@ function createTargetVersionKey() {
     Write-Output "Setting TargetReleaseVersion"
 
     $targetVersionEnabledSettingExist = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersion" -ErrorAction SilentlyContinue
-
-    if ($enableUpgrade) {
-        $enableTargetVersion = 1
-    } else {
-        $enableTargetVersion = 0
-    }
+    
+    $enableTargetVersion = 1
 
     if ($targetVersionEnabledSettingExist -eq $null) {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersion" -Value $enableTargetVersion -Type "DWORD"
@@ -36,7 +32,7 @@ function createTargetVersionInfoKey($currentWinVersion) {
 function main() {
     $winver = $null
 
-    if (Test-Path -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DisplayVersion") {
+    if (-Not $(Test-Path -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion")) {
         $winver = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion).DisplayVersion
     } else {
         # On older Windows 10 versions this is the key that holds the version number reference
@@ -48,9 +44,13 @@ function main() {
         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows" -Name "WindowsUpdate" -Type "Key"
     }
 
-    createTargetVersionKey
     if ($enableUpgrade) {
+        createTargetVersionKey
         createTargetVersionInfoKey -currentWinVersion $winver
+    } else {
+        Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersion" -ErrorAction SilentlyContinue
+        Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "TargetReleaseVersionInfo" -ErrorAction SilentlyContinue
+        Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ProductVersion" -ErrorAction SilentlyContinue
     }
 }
 
