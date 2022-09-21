@@ -57,7 +57,7 @@ function main() {
         $winver = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name ReleaseId).ReleaseId
     }
 
-    if ($winver -lt $uptoVersion) {
+    if ($winver.ToUpper() -lt $uptoVersion.ToUpper()) {
         $windownUpdateKey = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
         if (-Not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate")) {
             
