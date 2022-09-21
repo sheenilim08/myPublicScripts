@@ -2,7 +2,7 @@ param(
     [Parameter(HelpMessage="Enable Windows 10 Upgrade")]
     $enableUpgrade = $true,
 
-    [Parameter(HelpMessage="Version of Windows 10 you want to stay to")]
+    [Parameter(HelpMessage="Version of Windows 10 you want to stay to. This must be a string")]
     $uptoVersion
 )
 
