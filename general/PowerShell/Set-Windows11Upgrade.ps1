@@ -2,9 +2,20 @@ param(
     [Parameter(HelpMessage="Enable Windows 10 Upgrade")]
     $enableUpgrade = $true,
 
-    [Parameter(HelpMessage="Version of Windows 10 you want to stay to. This must be a string")]
-    $uptoVersion
+    [Parameter(HelpMessage="Version of Windows you want to stay to. This must be a string.")]
+    $uptoVersion,
+
+    [Parameter(HelpMessage="Specify which Windows OS.")]
+    $productVersion = "Windows 10"
 )
+
+function createProductVersionInfo() {
+    if (-Not Test-Path -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\ProductVersion") {
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ProductVersion" -Value $productVersion -Type "String"
+    } else {
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ProductVersion" -Value $productVersion -Type "String"
+    }
+}
 
 function createTargetVersionKey() {
     Write-Output "Setting TargetReleaseVersion"
@@ -56,6 +67,7 @@ function main() {
 
         createTargetVersionKey
         createTargetVersionInfoKey
+        createProductVersionInfo
     } else {
         Write-Output "No changes applied, you are setting a version $($uptoVersion) that is currently a lower version than the running version $($winver)."
     }
