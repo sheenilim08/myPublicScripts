@@ -1,7 +1,7 @@
 param (
     $administrativeUnitDisplayName,
     $membersListFile,
-    $groupList = @()
+    $groupListFile = $null
 )
 
 function Load-AzureADModule() {
@@ -29,9 +29,8 @@ function New-AdministrativeUnit() {
     return New-AzureADMSAdministrativeUnit -DisplayName $administrativeUnitDisplayName;
 }
 
-function Add-UserToAU($auObject, $userObject) {
-    Write-Output "Adding User ($($userObject.DisplayName) - $($userObject.UserPrincipalName)) to Administrative Unit.";
-    Add-AzureADMSAdministrativeUnitMember -Id $auObject.Id -RefObjectId $userObject.ObjectId;
+function Add-MemberToAU($auObject, $refObjectId) {
+    Add-AzureADMSAdministrativeUnitMember -Id $auObject.Id -RefObjectId $refObjectId;
 }
 
 function main() {
@@ -55,9 +54,23 @@ function main() {
 
     $userList = Get-Content -Path $membersListFile;
 
+    Write-Output "`nAdding Users..."
     foreach ($upn in $userList) {
         $currentUser = Get-AzureADUser -ObjectId $upn;
-        Add-UserToAU -auObject $au -userObject $currentUser;
+        Write-Output "Adding Member ($($currentUser.DisplayName) - $($currentUser.UserPrincipalName)) to Administrative Unit.";
+        Add-MemberToAU -auObject $au -refObjectId $currentUser.ObjectId;
+    }
+
+    
+    if ($groupListFile) {
+        Write-Output "`nAdding Groups..."
+        
+        $groupList = Get-Content -Path $groupListFile;
+        foreach ($displayName in $groupList) {
+            $currentGroup = Get-AzureADGroup -SearchString $displayName
+            Write-Output "Adding Member ($($currentGroup.DisplayName) - $($currentGroup.MailNickName)) to Administrative Unit."
+            Add-MemberToAU -auObject $au -refObjectId $currentGroup.ObjectId;
+        }
     }
 
     Write-Output "Script has finished Execution."
