@@ -13,8 +13,8 @@ function IsModuleInstalled() {
     return $false;
 }
 
-function main($vCenterName,$credentials) {
-    if (-Not IsModuleInstalled) {
+function main($vCenterName, $credentials) {
+    if (-Not $(IsModuleInstalled)) {
         $answer = $true
 
         do {
