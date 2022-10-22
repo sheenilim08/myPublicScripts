@@ -55,7 +55,9 @@ function main {
     foreach ($vm in $vms) {
         [array]$VMhdds = $vm | Get-Harddisk | Sort-Object Filename
         foreach ($hdd in $VMhdds) {
-            $returnObject = New-Object -TypeName System.Collections.ArrayList
+            Write-Output "Retrieving HDDs for VM: $($vm.Name)"
+
+            $returnObject = New-Object -TypeName PSObject
             $returnObject | Add-Member -MemberType NoteProperty -Name "Name" -Value $vm.Name
             $returnObject | Add-Member -MemberType NoteProperty -Name "VMPath" -Value $vm.ExtensionData.Config.Files.VmPathName
             $returnObject | Add-Member -MemberType NoteProperty -Name "FileName" -Value $hdd.Filename
@@ -69,7 +71,7 @@ function main {
     Write-Output "Exporting output to $($fileName)"
     $outputObjects | Export-Csv "./$fileName"
 
-    Write-Output "Below are all the VMfiles for all VMs managed by $($vCenter)"
+    Write-Output "Below are all the VMfiles for all VMs managed by $($vCenterName)"
     $outputObjects | FT Name, VMPath, FileName, CapacityGB
     
     if ($session.InvalidCertificateAction.toString() -ne "Ignore") {
