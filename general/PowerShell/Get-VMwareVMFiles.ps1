@@ -1,7 +1,30 @@
+# vCenterName - can be ESXi host
+
 param (
     $vCenterName,
     $credentials
 )
+
+<#
+        .SYNOPSIS
+        Gets all VM configuration file and associated VM hdd files managed by ESXi/vCenter.
+
+        .DESCRIPTION
+        The script will generate output on the powershell session window and export a file with the same information in the current directory.
+
+        .PARAMETER Name
+        vCenterName - the vCenter or ESXi to run the script againts.
+        credentials - the credential to use to get information to ESXi or vCenter
+        
+        .EXAMPLE
+        .\Get-VMwareVMFiles.ps1 -vCenterName myVsphere.domain.local -credentials $creds
+
+        .EXAMPLE
+        .\Get-VMwareVMFiles.ps1 -vCenterName myESXi.domain.local -credentials $creds
+
+        .LINK
+        Online version: https://raw.githubusercontent.com/sheenilim08/myPublicScripts/master/general/PowerShell/Get-VMwareVMFiles.ps1
+    #>
 
 function Check-IsModuleInstalled {
     $module = Get-InstalledModule -Name VMware.PowerCLI
