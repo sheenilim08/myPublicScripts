@@ -53,7 +53,7 @@ function main {
 
     $outputObjects = New-Object -TypeName System.Collections.ArrayList
     foreach ($vm in $vms) {
-        [array]$VMhdds = $vm | Get-Harddisk
+        [array]$VMhdds = $vm | Get-Harddisk | Sort-Object Filename
         foreach ($hdd in $VMhdds) {
             $returnObject = New-Object -TypeName System.Collections.ArrayList
             $returnObject | Add-Member -MemberType NoteProperty -Name "Name" -Value $vm.Name
@@ -61,13 +61,16 @@ function main {
             $returnObject | Add-Member -MemberType NoteProperty -Name "FileName" -Value $hdd.Filename
             $returnObject | Add-Member -MemberType NoteProperty -Name "CapacityGB" -Value $hdd.CapacityGB
 
-            
+            $outputObjects += $returnObject
         }
     }
 
     $fileName = "vmfiles-$(Get-Date -Format 'dddd-MM-dd-yyyy_HH-mm-ss').csv"
     Write-Output "Exporting output to $($fileName)"
     $outputObjects | Export-Csv "./$fileName"
+
+    Write-Output "Below are all the VMfiles for all VMs managed by $($vCenter)"
+    $outputObjects | FT Name, VMPath, FileName, CapacityGB
     
     if ($session.InvalidCertificateAction.toString() -ne "Ignore") {
         Write-Output "Reverting Certicate Action in the current session."
