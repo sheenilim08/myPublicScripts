@@ -73,7 +73,7 @@ function main {
     $outputObjects | Export-Csv "./$fileName"
 
     Write-Output "Below are all the VMfiles for all VMs managed by $($vCenterName)"
-    $outputObjects | FT Name, VMPath, FileName, CapacityGB -AutoSize
+    $outputObjects | FT -AutoSize
     
     if ($session.InvalidCertificateAction.toString() -ne "Ignore") {
         Write-Output "Reverting Certicate Action in the current session."
