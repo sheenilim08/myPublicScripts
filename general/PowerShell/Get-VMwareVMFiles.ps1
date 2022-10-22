@@ -4,7 +4,7 @@ param (
 )
 
 function Check-IsModuleInstalled {
-    $module = Get-IsModuleInstalled -Name VMware.PowerCLI
+    $module = Get-InstalledModule -Name VMware.PowerCLI
 
     if ($module) {
         return $true;
@@ -19,7 +19,7 @@ function main {
         $credentials
     )
 
-    if (-Not Check-IsModuleInstalled) {
+    if (-not $(Check-IsModuleInstalled)) {
         $answer = $true
 
         do {
