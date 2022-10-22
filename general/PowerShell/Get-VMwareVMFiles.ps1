@@ -60,8 +60,14 @@ function main {
             $returnObject | Add-Member -MemberType NoteProperty -Name "VMPath" -Value $vm.ExtensionData.Config.Files.VmPathName
             $returnObject | Add-Member -MemberType NoteProperty -Name "FileName" -Value $hdd.Filename
             $returnObject | Add-Member -MemberType NoteProperty -Name "CapacityGB" -Value $hdd.CapacityGB
+
+            
         }
     }
+
+    $fileName = "vmfiles-$(Get-Date -Format 'dddd-MM-dd-yyyy_HH-mm-ss').csv"
+    Write-Output "Exporting output to $($fileName)"
+    $outputObjects | Export-Csv "./$fileName"
     
     if ($session.InvalidCertificateAction.toString() -ne "Ignore") {
         Write-Output "Reverting Certicate Action in the current session."
