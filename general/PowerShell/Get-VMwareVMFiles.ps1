@@ -39,6 +39,12 @@ function main {
         }
     }
 
+    $session = Get-PowerCLIConfiguration -Scope Session
+    if ($session.InvalidCertificateAction.toString() -ne "Ignore") {
+        Write-Output "Supressing Certificate Validation for the ESXi/Vcenter"
+        Set-PowerCLIConfiguration -Scope Session -InvalidCertificateAction Ignore -Confirm:$false
+    }
+
     Write-Output "Connecting to ESXi/vCenter $($vCenterName)"
     Connect-VIServer -Server $vCenterName -Credential $creds
 
@@ -55,6 +61,11 @@ function main {
             $returnObject | Add-Member -MemberType NoteProperty -Name "FileName" -Value $hdd.Filename
             $returnObject | Add-Member -MemberType NoteProperty -Name "CapacityGB" -Value $hdd.CapacityGB
         }
+    }
+    
+    if ($session.InvalidCertificateAction.toString() -ne "Ignore") {
+        Write-Output "Reverting Certicate Action in the current session."
+        Set-PowerCLIConfiguration -Scope Session -InvalidCertificateAction $session.InvalidCertificateAction.toString() -Confirm:$false
     }
 }
 
