@@ -1,5 +1,5 @@
 param (
-    $vCenterName
+    $vCenterName,
     $credentials
 )
 
