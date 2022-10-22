@@ -59,6 +59,7 @@ function main {
 
             $returnObject = New-Object -TypeName PSObject
             $returnObject | Add-Member -MemberType NoteProperty -Name "Name" -Value $vm.Name
+            $returnObject | Add-Member -MemberType NoteProperty -Name "PowerState" -Value $vm.PowerState
             $returnObject | Add-Member -MemberType NoteProperty -Name "VMPath" -Value $vm.ExtensionData.Config.Files.VmPathName
             $returnObject | Add-Member -MemberType NoteProperty -Name "FileName" -Value $hdd.Filename
             $returnObject | Add-Member -MemberType NoteProperty -Name "CapacityGB" -Value $hdd.CapacityGB
