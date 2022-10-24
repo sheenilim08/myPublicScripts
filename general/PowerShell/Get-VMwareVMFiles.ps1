@@ -43,11 +43,16 @@ function main {
     )
 
     if (-not $(Check-IsModuleInstalled)) {
-        $answer = $true
+        $answer = "n"
 
         do {
             Write-Output "A required module to run this script is not installed (VMware.PowerCLI). Do you want to install it now? (Y or N - Default)"
             $answer = Read-Host
+
+            if ($answer -eq $null) {
+                $answer = 'n';
+            }
+
             $answer = $answer.toLower();
         } while ($answer -ne "y" -or $answer -ne "n");
 
