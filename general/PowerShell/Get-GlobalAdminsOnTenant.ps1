@@ -53,8 +53,8 @@ function main() {
       $outputObject += $returnObject
     }
   }
-  $outputObject
-  $outputObject | Export-Csv MFAUsers.csv -Force
+  $outputObject | Sort-Object Tenant | FT Tenant, DisplayName, MFADefault, MFAState
+  $outputObject | Sort-Object Tenant | Export-Csv MFAUsers.csv -Force
 }
 
 main
