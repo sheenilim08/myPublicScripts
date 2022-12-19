@@ -1,10 +1,10 @@
 function Get-TenantIds() {
-  #return Get-MsolPartnerContract -DomainName winsystems.com
+  #return Get-MsolPartnerContract -DomainName tenantPrimaryDomain.com
   return Get-MsolPartnerContract
 }
 
 function Get-RoleUsers($tenant, $role) {
-  return Get-MsolRoleMember -RoleObjectId $role.ObjectId -TenantId $tenant.TenantId
+  return Get-MsolRoleMember -RoleObjectId $role.ObjectId -TenantId $tenant.TenantId -MemberObjectTypes "User"
 }
 
 function main() {
@@ -22,7 +22,7 @@ function main() {
     $roleUsers = Get-RoleUsers -tenant $currentTenant -role $role
 
     $roleUsers | ForEach-Object {
-      $currentUser = Get-MsolUser -UserPrincipalName $_.EmailAddress -TenantId $currentTenant.TenantId -RoleMemberType User
+      $currentUser = Get-MsolUser -Objectid $_.ObjectId -TenantId $currentTenant.TenantId
       
       $returnObject = New-Object -TypeName PSObject
       $returnObject | Add-Member -MemberType NoteProperty -Name "Tenant" -Value $currentTenant.Name
