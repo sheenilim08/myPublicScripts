@@ -54,7 +54,7 @@ function main() {
     }
   }
   $outputObject
-  $outputObject | Export-Csv MFAUsers.csv
+  $outputObject | Export-Csv MFAUsers.csv -Force
 }
 
 main
