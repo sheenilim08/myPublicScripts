@@ -15,20 +15,21 @@ function main() {
   Get-TenantIds | ForEach-Object {
     
     $currentTenant = $_
-    
+    Write-Output "Currently Checking Tenant $($_.Name)"
+
     # Company Administrator in PowerShell is Global Administrator in the UI Portal.
     $role = Get-MsolRole -RoleName "Company Administrator" -TenantId $currentTenant.TenantId
     $roleUsers = Get-RoleUsers -tenant $currentTenant -role $role
 
     $roleUsers | ForEach-Object {
-      $currentUser = Get-MsolUser -UserPrincipalName $_.EmailAddress -TenantId $currentTenant.TenantId
-
+      $currentUser = Get-MsolUser -UserPrincipalName $_.EmailAddress -TenantId $currentTenant.TenantId -RoleMemberType User
       
       $returnObject = New-Object -TypeName PSObject
       $returnObject | Add-Member -MemberType NoteProperty -Name "Tenant" -Value $currentTenant.Name
-      $returnObject | Add-Member -MemberType NoteProperty -Name "DisplayName" -Value $_.DisplayName
-      $returnObject | Add-Member -MemberType NoteProperty -Name "UserPrincipalName" -Value $_.EmailAddress
-      $returnObject | Add-Member -MemberType NoteProperty -Name "MFAPhoneNumber" -Value $_.StrongAuthenticationUserDetails.PhoneNumber
+      $returnObject | Add-Member -MemberType NoteProperty -Name "DisplayName" -Value $currentUser.DisplayName
+
+      $returnObject | Add-Member -MemberType NoteProperty -Name "UserPrincipalName" -Value $currentUser.UserPrincipalName
+      $returnObject | Add-Member -MemberType NoteProperty -Name "MFAPhoneNumber" -Value $currentUser.StrongAuthenticationUserDetails.PhoneNumber
 
       # Get Default MFA Method
       # Reference: https://www.alitajran.com/export-office-365-users-mfa-status-with-powershell/
