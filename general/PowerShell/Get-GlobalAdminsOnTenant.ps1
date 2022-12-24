@@ -8,6 +8,19 @@ function Get-RoleUsers($tenant, $role) {
 }
 
 function main() {
+  $msonlineModule = Get-InstalledModule -Name MSOnline -ErrorAction SilentlyContinue
+  try {
+      if ($msonlineModule -eq $null) {
+          Write-Output "Installing MSOnline Module."
+          Install-Module -Name MSOnline
+      }
+  } catch {
+      Write-Output "Required Module MSOnline is not installed. Exiting Script."
+      return 1;
+  }
+
+  Write-Output "Importing MSOnline Module."
+  Import-Module -Name MSOnline
   Connect-MsolService
 
   $outputObject = @()
