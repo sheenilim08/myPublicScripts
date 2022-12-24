@@ -51,6 +51,8 @@ function main() {
         $returnObject | Add-Member -MemberType NoteProperty -Name "MFAState" -Value "Disabled"
       }
 
+      $returnObject | Add-Member -MemberType NoteProperty -Name "AccountDisabled" -Value $currentUser.BlockCredential
+
       $outputObject += $returnObject
     }
   }
@@ -59,4 +61,3 @@ function main() {
 }
 
 main
-
