@@ -29,8 +29,8 @@ Output will look like below, the ReplyInconsistency will have 4 result since Tes
 Normally it will return false and true when there is large latency difference between pings
 IPAddress    ReplyInconsistency           isUP
 ---------    ------------------           ----
-172.24.1.117 {False, False, False, False} True
-172.24.1.158 {False, False, False, False} True"
+8.8.8.8 {False, False, False, False} True
+1.1.1.1 {False, False, False, False} True"
 
 Write-Output $noticeMessage
 $resultObject | Export-Csv -Path PingResult.csv
