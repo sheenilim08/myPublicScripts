@@ -1,3 +1,5 @@
+# See versions on https://learn.microsoft.com/en-us/officeupdates/teams-app-versioning
+
 $version = "1.5.00.36367";
 $url = "https://statics.teams.cdn.office.net/production-windows-x64/$($version)/Teams_windows_x64.exe"
 
