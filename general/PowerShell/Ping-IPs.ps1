@@ -7,15 +7,16 @@ $csvFile | ForEach-Object {
     Write-Output "Testing $($_."IP ADDRESS")"
     $result = Test-Connection -ComputerName $_."IP ADDRESS"
     
-    
+    $thisResult = New-Object -TypeName PSObject
     $isUp = $false;
     if ($result) {
-        $isUp = $true;
+      $isUp = $true;
+      $thisResult | Add-Member -MemberType NoteProperty -Name ReplyInconsistency -Value $result.ReplyInconsistency
+    } else {
+      $thisResult | Add-Member -MemberType NoteProperty -Name ReplyInconsistency -Value $null
     }
 
-    $thisResult = New-Object -TypeName PSObject
     $thisResult | Add-Member -MemberType NoteProperty -Name IPAddress -Value $_."IP ADDRESS"
-    $thisResult | Add-Member -MemberType NoteProperty -Name ReplyInconsistency -Value $result.ReplyInconsistency
     $thisResult | Add-Member -MemberType NoteProperty -Name isUP -Value $isUp
 
     $resultObject += $thisResult
