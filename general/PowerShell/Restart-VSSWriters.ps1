@@ -5,12 +5,25 @@ $service_names = @("vss", "bits", "certsvc", "dfsr", "dhcpserver", "ntfrs", "srm
   "MSExchangeRepl", "MSExchangeIS", "MSMQ", "WSearch", "NTDS", "OSearch", "SPSearch", "SQLWriter", "TermServLicensing", 
   "WINS", "Winmgmt", "WIDWriter")
 
+$restartedService = @()
+$skippedServices = @()
+
+function Add-SuccessfulServiceRestart($service, $msg = "Service is restarted.") {
+  $reason = New-Object -TypeName PSObject
+  $reason | Add-Member -MemberType NoteProperty -Name "ServiceName" -Value $thisService.Name
+  $reason | Add-Member -MemberType NoteProperty -Name "Reason" -Value $msg
+  $restartedService += $reason
+}
+
+function Add-FailedServiceRestart($service, $msg = "Service is Disabled.") {
+  $reason = New-Object -TypeName PSObject
+  $reason | Add-Member -MemberType NoteProperty -Name "ServiceName" -Value $thisService.Name
+  $reason | Add-Member -MemberType NoteProperty -Name "Reason" -Value $msg
+  $skippedServices += $reason
+}
 
 function main() {
   Write-Output "Restarting VSS writers - will restart dependency if there are any.";
-
-  $restartedService = @()
-  $skippedServices = @()
 
   for ($j = 0; $j -lt $service_names.count; $j++) {
     $referenceService = $service_names[$j].tolower()
@@ -21,25 +34,18 @@ function main() {
       if ($thisService.StartType -eq "Disabled") {
         Write-Output "Service $($thisService.Name) is configured to be disabled. Skipping."
 
-        $reason = New-Object -TypeName PSObject
-        $reason | Add-Member -MemberType NoteProperty -Name "ServiceName" -Value $thisService.Name
-        $reason | Add-Member -MemberType NoteProperty -Name "Reason" -Value "Service is disabled"
-        $skippedServices += $reason
-
+        Add-FailedServiceRestart -service $thisService
+        
       } else {
         try {
           Write-Output "Restarting Serivce '$($thisService.Name) - $($thisService.DisplayName)'"
           Restart-Service -Name $thisService.Name -Force
 
-          $reason = New-Object -TypeName PSObject
-          $reason | Add-Member -MemberType NoteProperty -Name "ServiceName" -Value $thisService.Name
-          $reason | Add-Member -MemberType NoteProperty -Name "Reason" -Value "Service is restarted"
-          $restartedService += $reason
+          Add-SuccessfulServiceRestart -service $thisService
+
         } catch {
-          $reason = New-Object -TypeName PSObject
-          $reason | Add-Member -MemberType NoteProperty -Name "ServiceName" -Value $thisService.Name
-          $reason | Add-Member -MemberType NoteProperty -Name "Reason" -Value "Service failed to restart"
-          $skippedServices += $reason
+          Add-FailedServiceRestart -service $thisService -msg "Service failed to restart"
+
         }
       }
     } else {
