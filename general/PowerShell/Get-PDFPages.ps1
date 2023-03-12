@@ -1,3 +1,6 @@
+#Usage: This script must exist on C:\scripts 
+#You must download XPDF from http://www.xpdfreader.com/download.html, and put the pdfinfo.exe on c:\scripts
+
 param(
     [Parameter(HelpMessage="The folder to scan where the PDF files are located.")]
     $folderPathToScan,
@@ -17,7 +20,7 @@ function main() {
     foreach($file in $pdfFiles){
         $pdfFileTotalPage = (c:\scripts\pdfinfo $file.FullName | Select-String -Pattern '(?<=Pages:\s*)\d+').Matches.Value
 
-        $totalPages++
+        $totalPages += $pdfFileTotalPage
         $totalFiles++
 
         $thisPDFFileObject = New-Object -TypeName PSObject
