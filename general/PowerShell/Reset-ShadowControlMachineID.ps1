@@ -18,7 +18,7 @@ param(
     [Parameter(HelpMessage="The endpoint server to connect the shadowcontrol agent.")]
     $serverEndpoint, 
     
-    [Parameter(HelpMessage="The type of endpoint the computer is going to be. Values can be")]
+    [Parameter(HelpMessage="The type of endpoint the computer is going to be. Values can be - desktop,server,laptop,virtual")]
     $type="server")
 
 function Rename-File($fileToRename,$dateTime) {
