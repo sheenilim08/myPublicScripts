@@ -15,7 +15,7 @@ function main {
     [Parameter(HelpMessage="The Site that the agent will belong to.")]
     $siteName, 
 
-    [Parameter(HelpMessage="The type of endpoint to be added. Values can be 'Desktop', 'Server", 'Laptop', 'Virtual')]
+    [Parameter(HelpMessage="The type of endpoint to be added. Values can be 'Desktop', 'Server', 'Laptop', 'Virtual'")]
     $type="server", 
 
     [Parameter(HelpMessage="The url where to download the Shadow Control Agent.")]
