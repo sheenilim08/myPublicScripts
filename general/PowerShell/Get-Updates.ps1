@@ -39,10 +39,13 @@ if ($PSVersion.version > 4) {
       $InstallCollection.Add($Update)
       $Installer.Updates = $InstallCollection
 
+      Write-Output "Downloading $($Update.Title)"
       $Downloader.Download()
-      $Installer.Install()
 
-      if ($Installer.ResultCode -eq 2) {
+      Write-Output "Installing $($Update.Title)"
+      $installResult = $Installer.Install()
+
+      if ($installResult.ResultCode -eq 2) {
           Write-Output "Reboot required to complete the installation of the update."
       }
   } else {
