@@ -2,38 +2,50 @@ param ($KBNumber)
 
 $PSVersion = host
 if ($PSVersion.version > 4) {
-  Install-Module PSWindowsUpdate -AllowClobber
+  Install-Module PSWindowsUpdate -AllowClobber -Force
 
   $Update = Get-WUList -KBArticleID $KBNumber
-  If ($Update) {
+  if ($Update) {
       Write-Output "Update found: $($Update.Title)"
       $DownloadedUpdate = $Update | Get-WUDownload
       #$DownloadedUpdate | Install-WUUpdate -AcceptAll -AutoReboot
       $DownloadedUpdate
-  } Else {
+  } else {
       Write-Output "No update found with KB number: $KBNumber"
   }
 } else {
-  $Criteria = "IsInstalled=0 and Type='Software' and IsHidden=0"
+  $Criteria = "IsInstalled=0 and Type='Software' and IsHidden=0 and CategoryIDs contains '0FA1201D-4330-4FA8-8AE9-B877473B6441'"
   $Searcher = New-Object -ComObject Microsoft.Update.Searcher
   $SearchResult = $Searcher.Search($Criteria).Updates
 
-  $Update = $SearchResult | Where-Object {$_.KBArticleIDs -contains $KBNumber}
+  Write-Output "The following updates are available for this computer."
+  $SearchResult | FT KBArticleIDs, Title -AutoSize -Wrap
 
-  If ($Update) {
+  $Update = $SearchResult | Where-Object {
+    $_.Title.ToString().ToLower().contains($KBNumber.ToLower())
+  }
+
+  if ($Update) {
       Write-Output "Update found: $($Update.Title)"
       $Session = New-Object -ComObject Microsoft.Update.Session
       $Downloader = $Session.CreateUpdateDownloader()
-      $Downloader.Updates = $Update
+      $Installer = $Session.CreateUpdateInstaller()
+
+      $DownloadCollection = New-Object -ComObject Microsoft.Update.UpdateColl
+      $DownloadCollection.Add($Update)
+      $Downloader.Updates = $DownloadCollection
+
+      $InstallCollection = New-Object -ComObject Microsoft.Update.UpdateColl
+      $InstallCollection.Add($Update)
+      $Installer.Updates = $InstallCollection
+
       $Downloader.Download()
-      $Installer = New-Object -ComObject Microsoft.Update.Installer
-      $Installer.Updates = $Update
       $Installer.Install()
 
-      If ($Result.RebootRequired) {
-        Write-Output "Reboot required to complete the installation of the update."
+      if ($Installer.ResultCode -eq 2) {
+          Write-Output "Reboot required to complete the installation of the update."
       }
-  } Else {
+  } else {
       Write-Output "No update found with KB number: $KBNumber"
   }
 
