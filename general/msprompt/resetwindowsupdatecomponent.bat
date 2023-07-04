@@ -1,23 +1,29 @@
-echo "Stopping services"
-net stop bits
-net stop wuauserv
-net stop appidsvc
-net stop cryptsvc
+Write-Output "Stopping services"
+Stop-Service -ServiceName bits
+Stop-Service -ServiceName wuauserv
+Stop-Service -ServiceName appidsvc
+Stop-Service -ServiceName cryptsvc
 
-echo "Deleting '%ALLUSERSPROFILE%\Application Data\Microsoft\Network\Downloader\qmgr*.dat'"
-Del "%ALLUSERSPROFILE%\Application Data\Microsoft\Network\Downloader\qmgr*.dat"
+Write-Output "Deleting '%ALLUSERSPROFILE%\Application Data\Microsoft\Network\Downloader\qmgr*.dat'"
+Remove-Item -literalPath "%ALLUSERSPROFILE%\Application Data\Microsoft\Network\Downloader\qmgr*.dat" -force
 
-echo "Renaming Software Distribution Directories"
-del %systemroot%\SoftwareDistribution.bak_byscript
-del %systemroot%\system32\catroot2.bak_byscript
-ren %systemroot%\SoftwareDistribution SoftwareDistribution.bak_byscript
-ren %systemroot%\system32\catroot2 catroot2.bak_byscript
+Write-Output "Renaming Software Distribution Directories"
+if (Test-Path -Path "%systemroot%\SoftwareDistribution.bak_byscript") {
+  Remove-Item -literalPath "%systemroot%\SoftwareDistribution.bak_byscript" -force -recurse
+}
 
-echo "Resetting BITS Service Components"
+if (Test-Path -Path "%systemroot%\system32\catroot2.bak_byscript") {
+  Remove-Item -literalPath "%systemroot%\system32\catroot2.bak_byscript" -force -recurse
+}
+
+Rename-Item -Path %systemroot%\SoftwareDistribution -NewName %systemroot%\SoftwareDistribution.bak_byscript
+Rename-Item -Path %systemroot%\system32\catroot2 -NewName %systemroot%\system32\catroot2.bak_byscript
+
+Write-Output "Resetting BITS Service Components"
 sc.exe sdset bits D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)
 sc.exe sdset wuauserv D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)
 
-echo "Reregister BITS Service Components"
+Write-Output "Reregister BITS Service Components"
 cd /d %windir%\system32
 regsvr32.exe atl.dll /s
 regsvr32.exe urlmon.dll /s
@@ -56,8 +62,8 @@ regsvr32.exe wucltux.dll /s
 regsvr32.exe muweb.dll /s
 regsvr32.exe wuwebv.dll /s
 
-echo "Starting Services"
-net start bits
-net start wuauserv
-net start appidsvc
-net start cryptsvc
+Write-Output "Starting Services"
+Start-Service -ServiceName bits
+Start-Service -ServiceName wuauserv
+Start-Service -ServiceName appidsvc
+Start-Service -ServiceName cryptsvc
