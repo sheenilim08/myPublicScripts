@@ -16,15 +16,13 @@ if (Test-Path -Path "%systemroot%\system32\catroot2.bak_byscript") {
   Remove-Item -literalPath "%systemroot%\system32\catroot2.bak_byscript" -force -recurse
 }
 
-Rename-Item -Path %systemroot%\SoftwareDistribution -NewName %systemroot%\SoftwareDistribution.bak_byscript
-Rename-Item -Path %systemroot%\system32\catroot2 -NewName %systemroot%\system32\catroot2.bak_byscript
-
+cd /d %windir%\system32
 Write-Output "Resetting BITS Service Components"
-sc.exe sdset bits D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)
-sc.exe sdset wuauserv D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)
+cmd /c 'sc.exe sdset bits D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)'
+cmd /c 'sc.exe sdset wuauserv D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)'
+#exit # exit from Command Prompt
 
 Write-Output "Reregister BITS Service Components"
-cd /d %windir%\system32
 regsvr32.exe atl.dll /s
 regsvr32.exe urlmon.dll /s
 regsvr32.exe mshtml.dll /s
