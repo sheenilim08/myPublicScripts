@@ -16,7 +16,7 @@ if (Test-Path -Path "%systemroot%\system32\catroot2.bak_byscript") {
   Remove-Item -literalPath "%systemroot%\system32\catroot2.bak_byscript" -force -recurse
 }
 
-cd /d %windir%\system32
+cd $env:windir\system32
 Write-Output "Resetting BITS Service Components"
 cmd /c 'sc.exe sdset bits D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)'
 cmd /c 'sc.exe sdset wuauserv D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)'
