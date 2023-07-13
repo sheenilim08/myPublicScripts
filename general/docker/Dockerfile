@@ -12,7 +12,7 @@ RUN jenkins-plugin-cli --plugins git && \
   install software-properties-common -y && \
   curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
   apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
-  apt-get update && apt-get install packer && \
+  apt-get update && apt-get install -y packer && \
   \
   apt-get install ca-certificates curl gnupg -y && \
   install -m 0755 -d /etc/apt/keyrings && \
@@ -22,6 +22,6 @@ RUN jenkins-plugin-cli --plugins git && \
   focal stable" | \
   tee /etc/apt/sources.list.d/docker.list > /dev/null && \
   apt-get update && \
-  apt-get install docker-compose-plugin
+  apt-get install -y docker-compose-plugin
 
 USER jenkins
