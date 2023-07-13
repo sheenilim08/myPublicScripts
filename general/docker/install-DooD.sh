@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ $(lsb_release -rs) == "20.04" && $(lsb_release -is) == "Ubuntu" ]]; then
+    echo "This machine is running Ubuntu 20.04"
+else
+    echo "This machine is not running Ubuntu 20.04, you have issues with docker build."
+    exit 1
+fi
+
 if ! docker build -t customjenkins .; then
     echo "An error occurred while building the Docker image"
     exit 1
