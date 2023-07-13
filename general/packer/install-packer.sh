@@ -1,3 +1,5 @@
+#!/bin/bash
+
 apt-get update -y
 apt install software-properties-common -y
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
