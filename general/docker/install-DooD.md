@@ -8,3 +8,6 @@ It wil perform the following actions.
 3. Create a container using the customjenkins Image and use the volume created in step 2.
 
 The jenkins container will be available for view using the http://localhost:8079
+
+Credits: This script is based on the technical documentation of Adrian Mouat
+https://blog.container-solutions.com/running-docker-in-jenkins-in-docker
