@@ -1,6 +1,9 @@
 #!/bin/bash
 
-docker build -t customjenkins .
+if ! docker build -t customjenkins .; then
+    echo "An error occurred while building the Docker image"
+    exit 1
+fi
 
 if [ "$(docker volume ls | grep jenkins_home)" ]; then
     echo "Volume jenkins_home already exists"
