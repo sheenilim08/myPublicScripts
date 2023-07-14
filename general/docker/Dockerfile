@@ -20,6 +20,10 @@ RUN jenkins-plugin-cli --plugins git && \
   chmod a+r /etc/apt/keyrings/docker.gpg && \
   echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu focal stable" | \
   tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-  apt-get update && apt-get install -y docker-compose-plugin
+  apt-get update && apt-get install -y docker-compose-plugin && \
+  \
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+  unzip awscliv2.zip && \
+  ./aws/install
 
 USER jenkins
