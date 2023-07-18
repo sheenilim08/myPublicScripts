@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $(lsb_release -rs) == "20.04" && $(lsb_release -is) == "Ubuntu" ]]; then
+if [[ $(lsb_release -rs) =~ ^([0-9]+)\.([0-9]+) && ${BASH_REMATCH[1]} == 20 && ${BASH_REMATCH[2]} == 4 && $(lsb_release -is) == "Ubuntu" ]]; then
     echo "This machine is running Ubuntu 20.04. Resuming."
 else
     echo "This machine is not running Ubuntu 20.04, you have issues with docker build."
