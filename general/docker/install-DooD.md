@@ -1,3 +1,11 @@
+### Version History
+Version 1.01
+- Now includes terraform
+- Fixed the Ubuntu version detection, versions like 20.04.xxx are now allowed on the install-DooD.sh script
+
+Credits: This script is based on the technical documentation of Adrian Mouat
+https://blog.container-solutions.com/running-docker-in-jenkins-in-docker
+
 Install DooD (Docker outside of Docker)
 
 It wil perform the following actions.
@@ -13,5 +21,3 @@ docker: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.34' not found (require
 
 The jenkins container will be available for view using the http://localhost:8079
 
-Credits: This script is based on the technical documentation of Adrian Mouat
-https://blog.container-solutions.com/running-docker-in-jenkins-in-docker
