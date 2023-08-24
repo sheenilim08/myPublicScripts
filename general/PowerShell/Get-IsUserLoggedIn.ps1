@@ -13,8 +13,7 @@ function main() {
 
 
 
-  foreach ($User in $Users)
-  {
+  foreach ($User in $Users) {
       $currentUser = [PSCustomObject]@{
           ComputerName = $Computer
           Username = $User.USERNAME
