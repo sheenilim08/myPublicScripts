@@ -19,14 +19,15 @@ function main {
     $type="server", 
 
     [Parameter(HelpMessage="The url where to download the Shadow Control Agent.")]
-    $url
+    $url="https://downloads.storagecraft.com/_shadowcontrol/ShadowControl_Installer_4.3_en.msi"
   )
 
   Write-Output "Downloading from '$($url)'"
   Invoke-WebRequest $url -OutFile ShadowControl_Installer.msi
+  Unblock-File ShadowControl_Installer.msi
 
   Write-Output "Installing the ShadowControl Agent"
-  Start-Process -FilePath "c:\windows\system32\msiexec.exe" -Verb RunAs -ArgumentList "/i .\ShadowControl_Installer.msi /qn /norestart"
+  .\ShadowControl_Installer.msi /qn /norestart"
 
   Write-Output "Subscribing to $($shadowControlApplianceHost)."
   Set-Location "C:\Program Files (x86)\StorageCraft\CMD"
@@ -38,4 +39,4 @@ function main {
   }
 }
 
-main -shadowControlApplianceHost "myhost" -username "username" -password "password" -orgName "orgName" -siteName "siteName" -type "server" -url "url"
+main -shadowControlApplianceHost "myhost" -username "username" -password "password" -orgName "orgName" -siteName "siteName" -type "server" -url "https://downloads.storagecraft.com/_shadowcontrol/ShadowControl_Installer_4.3_en.msi"
