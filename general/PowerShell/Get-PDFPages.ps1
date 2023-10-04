@@ -38,4 +38,4 @@ function main() {
     $files | FT -AutoSize
 }
 
-main
+mainvs
