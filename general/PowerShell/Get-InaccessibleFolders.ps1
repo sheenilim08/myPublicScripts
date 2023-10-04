@@ -3,7 +3,7 @@ param($folderPath)
 $inaccessibleFolders = @()
 
 #Get-ChildItem -Path $folderPath -Directory | ForEach-Object {
-$childFolders = Get-ChildItem -Path $folderPath -Directory | Sort-Object FullName
+$childFolders = Get-ChildItem -Path $folderPath -Directory -Recurse | Sort-Object FullName
 foreach ($currentFolder in $childFolders) {
     try {
         New-Item -Path $currentFolder.FullName -Name "testfile.txt" -Force -ItemType File -ErrorAction Stop
