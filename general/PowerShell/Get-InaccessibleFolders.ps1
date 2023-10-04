@@ -19,4 +19,5 @@ if ($inaccessibleFolders.Count -eq 0) {
     Write-Output "There are no folders that you cannot access."
 }
 
+Write-Output "Inaccessible Folders"
 $inaccessibleFolders | FT -AutoSize -Wrap
