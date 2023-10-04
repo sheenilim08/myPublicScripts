@@ -1,9 +1,16 @@
-param($folderPath)
+param($folderPath, $shouldRecurse=$false)
 
 $inaccessibleFolders = @()
 
 #Get-ChildItem -Path $folderPath -Directory | ForEach-Object {
-$childFolders = Get-ChildItem -Path $folderPath -Directory -Recurse | Sort-Object FullName
+$searchCmd = $null
+if ($shouldRecurse) {
+    $searchCmd = Get-ChildItem -Path $folderPath -Directory -Recurse
+} else {
+    $searchCmd = Get-ChildItem -Path $folderPath -Directory
+}
+
+$childFolders = $searchCmd | Sort-Object FullName
 foreach ($currentFolder in $childFolders) {
     try {
         New-Item -Path $currentFolder.FullName -Name "testfile.txt" -Force -ItemType File -ErrorAction Stop
@@ -19,5 +26,5 @@ if ($inaccessibleFolders.Count -eq 0) {
     Write-Output "There are no folders that you cannot access."
 }
 
-Write-Output "Inaccessible Folders"
+Write-Output "Inaccessible Folders:"
 $inaccessibleFolders | FT -AutoSize -Wrap
