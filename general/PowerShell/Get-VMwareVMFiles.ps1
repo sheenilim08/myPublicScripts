@@ -76,7 +76,7 @@ function main {
     }
 
     Write-Output "Connecting to ESXi/vCenter $($vCenterName)"
-    Connect-VIServer -Server $vCenterName -Credential $creds
+    Connect-VIServer -Server $vCenterName -Credential $credentials
 
     Write-Output "Retreiving all VMs managed by $($vCenterName)".
     $vms = Get-VM | Sort-Object Name
