@@ -58,7 +58,7 @@ function main {
 
         if ($answer -eq "y") {
             Write-Output "Installing VMware.PowerCLI "
-            Install-Module -Name VMware.PowerCLI
+            Install-Module -Name VMware.PowerCLI -Force
         }
 
         if ($answer -eq "n") {
