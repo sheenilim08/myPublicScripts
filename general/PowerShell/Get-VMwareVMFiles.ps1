@@ -42,6 +42,8 @@ function main {
         $credentials
     )
 
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
     if (-not $(Check-IsModuleInstalled)) {
         $answer = "n"
 
