@@ -22,8 +22,9 @@ function main() {
     }
   }
   
-  
+  $currentDate = Get-Date
   $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize
+  $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize | Out-File "C:\Scripts\DeleteJob on $($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).txt"
 }
 
 main
