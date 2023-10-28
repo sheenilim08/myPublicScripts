@@ -1,12 +1,12 @@
-param(
-  [Parameter(HelpMessage="The path and file filter to delete")]
-  $fileFilter = "C:\*.xml",
-  
-  [Parameter(HelpMessage="The minimum age to delete.")]
-  $ageToDelete = 91
-)
-
 function main() {
+  param(
+    [Parameter(HelpMessage="The path and file filter to delete")]
+    $fileFilter = "C:\*.xml",
+    
+    [Parameter(HelpMessage="The minimum age to delete.")]
+    $ageToDelete = 91
+  )
+
   $filteredItems = Get-ChildItem -Path $fileFilter
 
   $quafliedForDeletion = @()
@@ -25,6 +25,11 @@ function main() {
   $currentDate = Get-Date
   $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize
   $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize | Out-File "C:\Scripts\DeleteJob on $($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).txt"
+
+
+  $quafliedForDeletion | ForEach-Object {
+    Remove-Item $_.Path
+  }
 }
 
-main
+main -fileFilter = "D:\BetterForms Backups\*.xml" -ageToDelete 91
