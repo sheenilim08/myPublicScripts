@@ -1,13 +1,16 @@
 function main() {
   param(
-    [Parameter(HelpMessage="The path and file filter to delete")]
-    $fileFilter = "C:\*.xml",
+    [Parameter(HelpMessage="The directory to check. Path must end '\'")]
+    $directory = "C:\",
+    
+    [Parameter(HelpMessage="The file types to delete in the specfied directory.")]
+    $ext = "*.xml",
     
     [Parameter(HelpMessage="The minimum age to delete.")]
     $ageToDelete = 91
   )
 
-  $filteredItems = Get-ChildItem -Path $fileFilter
+  $filteredItems = Get-ChildItem -Path "$($directory)$($ext)"
 
   $quafliedForDeletion = @()
   foreach ($currentItem in $filteredItems) {
@@ -32,4 +35,4 @@ function main() {
   }
 }
 
-main -fileFilter = "D:\BetterForms Backups\*.xml" -ageToDelete 91
+main -directory "D:\BetterForms Backups\" -ext "*.xml" -ageToDelete 92
