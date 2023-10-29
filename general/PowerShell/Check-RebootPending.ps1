@@ -1,3 +1,5 @@
+# Reference: https://theautomationcode.com/how-to-detect-if-a-server-reboot-is-pending/
+
 $isRebootPending =  $true
 if(Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing" -Name "RebootPending" -EA Ignore) {
     $isRebootPending = $true
