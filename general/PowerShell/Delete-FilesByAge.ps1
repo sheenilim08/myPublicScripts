@@ -26,8 +26,10 @@ function main() {
   }
   
   $currentDate = Get-Date
-  $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize
-  $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize | Out-File "$($directory)\DeleteJob on $($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).txt"
+  $message = "For documentation, please refer to the link below. `n`nhttps://modo-networks-llc.itglue.com/2416831/docs/14243804 `n`n"
+  $message += $quafliedForDeletion | Sort-Object Age | FT Path, Age, DateCreation -AutoSize | Out-String
+  Write-Output $message
+  $message | Out-File "$($directory)\DeleteJob on $($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).txt"
 
 
   $quafliedForDeletion | ForEach-Object {
@@ -35,4 +37,4 @@ function main() {
   }
 }
 
-main -directory "D:\BetterForms Backups\" -ext "*.xml" -ageToDelete 92
+main -directory "D:\BetterForms Backups\" -ext "*.xml" -ageToDelete 91
