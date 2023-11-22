@@ -1,3 +1,7 @@
+@REM this batch script is the same script that is exacted from 
+@REM https://support.storagecraft.com/s/article/Managed-Folder-s-Missing-After-Updating-Windows-Proactive-Steps?language=en_US
+@REM the difference is the last line is commented out so that intervention is not required
+
 @Echo Off
 set TEMPDIR="C:\temp"
 mkdir %TEMPDIR%
@@ -19,3 +23,4 @@ del /Q "%TEMPDIR%\*"
 rmdir %TEMPDIR% 
 Echo Created C:\Program Files (x86)\StorageCraft\ImageManager\ImageManager_Config_backup.zip
 Echo ImageManager Configuration Backup Complete.
+@REM pause
