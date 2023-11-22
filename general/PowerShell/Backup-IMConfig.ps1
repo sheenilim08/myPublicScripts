@@ -15,7 +15,7 @@ function main() {
   Unzip -zipfile $env:userprofile\IMBackupConfig.zip -outpath $env:userprofile\IMBackupConfig
   cd $env:userprofile\IMBackupConfig
   
-  Get-Content IMBackup.cmd | Select-String -pattern "H|159" -notmatch | Out-File IMBackup-nopause.cmd
+  Get-Content IMBackup.cmd | Select-String -pattern "pause" -notmatch | Out-File IMBackup-nopause.cmd
   .\IMBackup-nopause.cmd
 
   $currentDate = Get-Date
