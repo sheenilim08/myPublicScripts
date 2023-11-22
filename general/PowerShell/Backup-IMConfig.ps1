@@ -10,8 +10,17 @@ function Unzip
 function main() {
   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
+  $currentDate = Get-Date
+  $timestamp = "$($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute)"
+
   if ( -not (Test-Path -Path $env:userprofile\IMBackupConfig-Tool )) {
     mkdir $env:userprofile\IMBackupConfig-Tool 
+  }
+
+  if ( Test-Path -Path C:\temp ) {
+    Write-Output "C:\temp exist renaming it to C:\temp-old-$($timestamp)"
+    Move-Item -Path "C:\temp" `
+      -Destination "C:\temp-old-$($timestamp)"
   }
 
   cd $env:userprofile\IMBackupConfig-Tool
@@ -21,9 +30,8 @@ function main() {
   # Unzip -zipfile $env:userprofile\IMBackupConfig-Tool.zip -outpath $env:userprofile\IMBackupConfig-Tool
   
   .\IMBackup-Tool.cmd
-
-  $currentDate = Get-Date
-  $filename = "ImageManager_Config_backup-$($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).zip"
+  
+  $filename = "ImageManager_Config_backup-$($timestamp).zip"
 
   Write-Output "Moving exported file to $($env:userprofile)\$($filename)"
   Move-Item  `
