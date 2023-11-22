@@ -14,8 +14,16 @@ function main() {
 
   Unzip -zipfile $env:userprofile\IMBackupConfig.zip -outpath $env:userprofile\IMBackupConfig
   cd $env:userprofile\IMBackupConfig
+  
+  Get-Content IMBackup.cmd | Select-String -pattern "H|159" -notmatch | Out-File IMBackup-nopause.cmd
+  .\IMBackup-nopause.cmd
 
-  .\IMBackup.cmd
+  $currentDate = Get-Date
+
+  Write-Output "Moving exported file to $($env:userprofile)"
+  Move-Item  `
+    -Path "C:\Program Files (x86)\StorageCraft\ImageManager\ImageManager_Config_backup.zip" `
+    -Destination "$($env:userprofile)\ImageManager_Config_backup-$($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).zip"
 }
 
 main
