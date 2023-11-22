@@ -23,11 +23,12 @@ function main() {
   .\IMBackup-Tool.cmd
 
   $currentDate = Get-Date
+  $filename = "ImageManager_Config_backup-$($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).zip"
 
-  Write-Output "Moving exported file to $($env:userprofile)"
+  Write-Output "Moving exported file to $($env:userprofile)\$($filename)"
   Move-Item  `
     -Path "C:\Program Files (x86)\StorageCraft\ImageManager\ImageManager_Config_backup.zip" `
-    -Destination "$($env:userprofile)\ImageManager_Config_backup-$($currentDate.Month)-$($currentDate.Day)-$($currentDate.Year)_$($currentDate.Hour)-$($currentDate.Minute).zip"
+    -Destination "$($env:userprofile)\$($filename)"
 }
 
 main
