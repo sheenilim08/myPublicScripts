@@ -37,6 +37,12 @@ function main() {
   Move-Item  `
     -Path "C:\Program Files (x86)\StorageCraft\ImageManager\ImageManager_Config_backup.zip" `
     -Destination "$($env:userprofile)\$($filename)"
+
+  dir "$($env:userprofile)\$($filename)"
+
+  if ((dir "$($env:userprofile)\$($filename)").Length -lt 1024) {
+    Write-Output "The output zip file is less than 1KB, it might be corrupted, please check the contents before doing any doing Image Manager related task."
+  }
 }
 
 main
