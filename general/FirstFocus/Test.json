@@ -1,0 +1,574 @@
+[
+  {
+    "id": 0,
+    "identifier": "OS",
+    "name": "OnlySheen",
+    "status": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "addressLine1": "string",
+    "addressLine2": "string",
+    "city": "string",
+    "state": "string",
+    "zip": "string",
+    "country": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "phoneNumber": "string",
+    "faxNumber": "string",
+    "website": "string",
+    "territory": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "market": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "accountNumber": "string",
+    "defaultContact": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "dateAcquired": "2024-01-16T09:02:21Z",
+    "sicCode": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "parentCompany": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "annualRevenue": 0,
+    "numberOfEmployees": 0,
+    "yearEstablished": 0,
+    "revenueYear": 0,
+    "ownershipType": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "timeZoneSetup": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "leadSource": "string",
+    "leadFlag": true,
+    "unsubscribeFlag": true,
+    "calendar": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "userDefinedField1": "string",
+    "userDefinedField2": "string",
+    "userDefinedField3": "string",
+    "userDefinedField4": "string",
+    "userDefinedField5": "string",
+    "userDefinedField6": "string",
+    "userDefinedField7": "string",
+    "userDefinedField8": "string",
+    "userDefinedField9": "string",
+    "userDefinedField10": "string",
+    "vendorIdentifier": "string",
+    "taxIdentifier": "string",
+    "taxCode": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billingTerms": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "invoiceTemplate": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "pricingSchedule": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "companyEntityType": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billToCompany": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billingSite": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billingContact": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "invoiceDeliveryMethod": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "invoiceToEmailAddress": "string",
+    "invoiceCCEmailAddress": "string",
+    "deletedFlag": true,
+    "dateDeleted": "2024-01-16T09:02:21Z",
+    "deletedBy": "string",
+    "mobileGuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "facebookUrl": "string",
+    "twitterUrl": "string",
+    "linkedInUrl": "string",
+    "currency": {
+      "id": 0,
+      "symbol": "string",
+      "currencyCode": "string",
+      "decimalSeparator": "string",
+      "numberOfDecimals": 0,
+      "thousandsSeparator": "string",
+      "negativeParenthesesFlag": true,
+      "displaySymbolFlag": true,
+      "currencyIdentifier": "string",
+      "displayIdFlag": true,
+      "rightAlign": true,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "territoryManager": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "resellerIdentifier": "string",
+    "isVendorFlag": true,
+    "types": [
+      {
+        "id": 0,
+        "name": "string",
+        "_info": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        }
+      }
+    ],
+    "site": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "integratorTags": [
+      "string"
+    ],
+    "_info": {
+      "additionalProp1": "string",
+      "additionalProp2": "string",
+      "additionalProp3": "string"
+    },
+    "customFields": [
+      {
+        "id": 0,
+        "caption": "string",
+        "type": "TextArea",
+        "entryMethod": "Date",
+        "numberOfDecimals": 0,
+        "value": {}
+      }
+    ]
+  },
+  {
+    "id": 0,
+    "identifier": "BSR",
+    "name": "Bacon Salads Restaurant",
+    "status": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "addressLine1": "string",
+    "addressLine2": "string",
+    "city": "string",
+    "state": "string",
+    "zip": "string",
+    "country": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "phoneNumber": "string",
+    "faxNumber": "string",
+    "website": "string",
+    "territory": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "market": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "accountNumber": "string",
+    "defaultContact": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "dateAcquired": "2024-01-16T09:02:21Z",
+    "sicCode": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "parentCompany": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "annualRevenue": 0,
+    "numberOfEmployees": 0,
+    "yearEstablished": 0,
+    "revenueYear": 0,
+    "ownershipType": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "timeZoneSetup": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "leadSource": "string",
+    "leadFlag": true,
+    "unsubscribeFlag": true,
+    "calendar": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "userDefinedField1": "string",
+    "userDefinedField2": "string",
+    "userDefinedField3": "string",
+    "userDefinedField4": "string",
+    "userDefinedField5": "string",
+    "userDefinedField6": "string",
+    "userDefinedField7": "string",
+    "userDefinedField8": "string",
+    "userDefinedField9": "string",
+    "userDefinedField10": "string",
+    "vendorIdentifier": "string",
+    "taxIdentifier": "string",
+    "taxCode": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billingTerms": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "invoiceTemplate": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "pricingSchedule": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "companyEntityType": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billToCompany": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billingSite": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "billingContact": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "invoiceDeliveryMethod": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "invoiceToEmailAddress": "string",
+    "invoiceCCEmailAddress": "string",
+    "deletedFlag": true,
+    "dateDeleted": "2024-01-16T09:02:21Z",
+    "deletedBy": "string",
+    "mobileGuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "facebookUrl": "string",
+    "twitterUrl": "string",
+    "linkedInUrl": "string",
+    "currency": {
+      "id": 0,
+      "symbol": "string",
+      "currencyCode": "string",
+      "decimalSeparator": "string",
+      "numberOfDecimals": 0,
+      "thousandsSeparator": "string",
+      "negativeParenthesesFlag": true,
+      "displaySymbolFlag": true,
+      "currencyIdentifier": "string",
+      "displayIdFlag": true,
+      "rightAlign": true,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "territoryManager": {
+      "id": 0,
+      "identifier": "string",
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "resellerIdentifier": "string",
+    "isVendorFlag": true,
+    "types": [
+      {
+        "id": 0,
+        "name": "string",
+        "_info": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        }
+      }
+    ],
+    "site": {
+      "id": 0,
+      "name": "string",
+      "_info": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "integratorTags": [
+      "string"
+    ],
+    "_info": {
+      "additionalProp1": "string",
+      "additionalProp2": "string",
+      "additionalProp3": "string"
+    },
+    "customFields": [
+      {
+        "id": 0,
+        "caption": "string",
+        "type": "TextArea",
+        "entryMethod": "Date",
+        "numberOfDecimals": 0,
+        "value": {}
+      }
+    ]
+  }
+]
