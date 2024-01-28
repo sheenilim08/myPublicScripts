@@ -1,3 +1,30 @@
+function Import-PartnerCenterModule {
+  param(
+    [switch]
+    $Force,
+
+    [switch]
+    $RequireModule
+  )
+
+  $pcModule = Get-InstalledModule -Name PartnerCenter -ErrorAction SilentlyContinue
+  try {
+    if ($null -eq $pcModule) {
+      Write-Output "Installing PartnerCenter Module."
+      if ($Force) {
+        Install-Module -Name PartnerCenter -Force
+      } else {
+        Install-Module -Name PartnerCenter
+      }
+    }
+  } catch {
+    if ($RequireModule) {
+      Write-Output "Required Module PartnerCenter is not installed. Exiting Script."
+      return 1;
+    }
+  }
+}
+
 function Import-MicrosoftGraphModule {
   param(
     [switch]
@@ -39,8 +66,10 @@ function Import-ExchangeOnlineModule {
       Write-Output "Installing ExchangeOnlineManagement Module."
       if ($RequireModule) {
         Install-Module -Name ExchangeOnlineManagement -Force
+        Install-Module -Name ExchangePowerShell -Force
       } else {
         Install-Module -Name ExchangeOnlineManagement
+        Install-Module -Name ExchangePowerShell
       }
     }
   } catch {
