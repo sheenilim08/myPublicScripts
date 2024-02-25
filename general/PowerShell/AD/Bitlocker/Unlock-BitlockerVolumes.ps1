@@ -1,4 +1,7 @@
 params(
+  $organisation,
+  $to,
+  $from,
   $smtpServer,
   [switch]$ssl,
   [switch]$unlock,
@@ -9,6 +12,9 @@ function Send-EmailNotification {
   params(
     $emailBody
   )
+
+  if ($ssl) { Send-MailMessage -To $to -From $from -Subject "BitLocker Check Notification $($organisation)" -Body $emailBody -UseSsl -SmtpServer $smtpServer }
+  else { Send-MailMessage -To $to -From $from -Subject "BitLocker Check Notification $($organisation)" -Body $emailBody -UseSsl -SmtpServer $smtpServer }
 }
 
 function main() {
