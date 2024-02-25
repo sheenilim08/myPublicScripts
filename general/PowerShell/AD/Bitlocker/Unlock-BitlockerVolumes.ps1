@@ -1,4 +1,4 @@
-params(
+param(
   $organisation,
   $to,
   $from,
@@ -9,7 +9,7 @@ params(
 )
 
 function Send-EmailNotification {
-  params(
+  param(
     $emailBody
   )
 
