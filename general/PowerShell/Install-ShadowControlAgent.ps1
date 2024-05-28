@@ -22,6 +22,8 @@ function main {
     $url="https://downloads.storagecraft.com/_shadowcontrol/ShadowControl_Installer_4.3_en.msi"
   )
 
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
   Write-Output "Downloading from '$($url)'"
   Invoke-WebRequest $url -OutFile ShadowControl_Installer.msi
   Unblock-File ShadowControl_Installer.msi

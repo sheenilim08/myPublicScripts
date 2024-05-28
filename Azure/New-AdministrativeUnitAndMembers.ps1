@@ -60,8 +60,8 @@ function main() {
         Write-Output "Adding Member ($($currentUser.DisplayName) - $($currentUser.UserPrincipalName)) to Administrative Unit.";
         Add-MemberToAU -auObject $au -refObjectId $currentUser.ObjectId;
     }
-
     
+
     if ($groupListFile) {
         Write-Output "`nAdding Groups..."
         
