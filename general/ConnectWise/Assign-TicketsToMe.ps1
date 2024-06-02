@@ -23,7 +23,7 @@ $CWMConnectionInfo = @{
   clientid    = $CWClientID
 }
 
-Write-Output "Connecting to CW Endpoint $($CWMConnectionInfo))"
+Write-Output "Connecting to CW Endpoint $($CWMConnectionInfo.Server)"
 Connect-CWM @CWMConnectionInfo -Force
 
 Write-Output "Querying Unassigned Tickets - Professional Services..."
