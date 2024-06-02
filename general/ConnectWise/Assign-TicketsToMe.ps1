@@ -24,11 +24,11 @@ $CWMConnectionInfo = @{
 }
 
 if (Get-InstalledModule 'ConnectWiseManageAPI' -ErrorAction SilentlyContinue){ 
-    Update-Module 'ConnectWiseManageAPI' -Verbose 
+    Update-Module 'ConnectWiseManageAPI' -Verbose -Force 
 }
 
 else { 
-    Install-Module 'ConnectWiseManageAPI' -Verbose 
+    Install-Module 'ConnectWiseManageAPI' -Verbose -Force
 }
 
 Import-Module 'ConnectWiseManageAPI'
