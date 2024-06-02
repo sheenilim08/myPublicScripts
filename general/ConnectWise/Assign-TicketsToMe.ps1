@@ -40,6 +40,7 @@ Write-Output "Querying Unassigned Tickets - Professional Services..."
 $unassignedProfTicket = @(Get-CWMTicket -condition '((status/name = "New" or status/name = "New \(email connector\)") and board/name = "Professional Services" and resources = null)')
 
 $unassignedProfTicket | Foreach-Object {
+    $ticketID = $_.id
     # This must be done first for voice mail tickets otherwise, all other update commands will fail because the email is invalid for this ticket.
     # This is a special case for voice mail tickets.
     if ($_.summary.ToString().Tolower().Contains("shared voicemail (support voicemail number)")) {
@@ -54,7 +55,6 @@ $unassignedProfTicket | Foreach-Object {
         Update-CWMTicket @sheenContactEmail | Out-Null
     }
 
-    $ticketID = $_.id
 
     $ticketOwner = @{
         ID = $ticketID
