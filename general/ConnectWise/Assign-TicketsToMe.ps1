@@ -154,6 +154,7 @@ function main() {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341 # 341 is the "Modo Networks"
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Application
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 50 # 50 is the subtype for SubType: Backup
+
         } elseif ($_.summary.ToString().ToLower().Contains("bug fix advisory") -or $_.summary.ToString().ToLower().Contains("enhancement advisory")) {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341 # 341 is the "Modo Networks"
             Update-Contact -ticketID $ticketID -summary $_.summary
@@ -164,6 +165,14 @@ function main() {
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 44 # 44 is the type for Type: Network
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 83 # 83 is the subtype for SubType: SAN
             Update-Item -ticketID $ticketID -summary $_.summary -itemId 96 # 96 is the Item:Maintenance
+
+        } elseif ($_.summary.ToString().ToLower().Contains("[OUT OF PROTECTION THRESHOLD]")) {
+            # Must be assign to each company - do not automate this part for this ticket.
+            # Update-Company -ticketID $ticketID -summary $_.summary -companyid 341  # 341 is the "Modo Networks"
+            # Update-Contact -ticketID $ticketID -summary $_.summary
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Application
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 50 # 50 is the subtype for SubType: Backup
+            Update-Item -ticketID $ticketID -summary $_.summary -itemId 3 # 3467 is the Item: Failure
 
         } elseif ($_.summary.ToString().ToLower().Contains("new login to your synology nas") -or $_.summary.ToString().ToLower().Contains("el rio iscsi]drive 5 in rs2414+ is failing") -or $_.summary.ToString().ToLower() -like "* is in extremely low capacity") {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341  # 341 is the "Modo Networks"
@@ -178,7 +187,7 @@ function main() {
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 50 # 50 is the subtype for SubType: Backup
             Update-Item -ticketID $ticketID -summary $_.summary -itemId 3467 # 3467 is the Item: Cloud
 
-        }elseif ($_.summary.ToString().Contains("INTELLA - REORGANIZE")) {
+        } elseif ($_.summary.ToString().Contains("INTELLA - REORGANIZE")) {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 12231 # ID for TransStar National Title
             Update-Contact -ticketID $ticketID -summary $_.summary
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 13 # 13 is the type for Type: Server
@@ -211,7 +220,7 @@ function main() {
     }
 
     Write-Output "Querying Unassigned Tickets - Zenith..."
-    $unassignedZenithfTicket = @(Get-CWMTicket -condition '((status/name = "New" or status/name = "New \(email connector\)") and board/name = "Zenith" and resources = null and (summary not contains "desktop"))')
+    $unassignedZenithfTicket = @(Get-CWMTicket -condition '((status/name = "New" or status/name = "New \(email connector\)") and (board/name = "Zenith" or board/name = "Patching" or board/name = "System Performance") and resources = null and (summary not contains "desktop"))')
 
     $unassignedZenithfTicket | Foreach-Object {
         $ticketID = $_.id
@@ -226,6 +235,12 @@ function main() {
         Write-Output "Updating Resources and Ticket Owner for $($ticketID) $($_.summary)"
         Update-CWMTicket @ticketOwner | Out-Null
     #    New-CWMScheduleEntry -member @{identifier = "SLim"} -objectId $ticketID -type @{id=4}
+
+        if ($_.summary.ToString().ToLower().Contains("Server reboot pending after patch installation")) {
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 33 # 33 is the type for Type: Server
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 125 # 125 is the subtype for SubType: Update
+
+        }
     }
 
     Disconnect-CWM
