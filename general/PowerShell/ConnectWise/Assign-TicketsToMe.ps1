@@ -150,10 +150,43 @@ function main() {
         Update-CWMTicket @ticketOwner | Out-Null
     #    New-CWMScheduleEntry -member @{identifier = "SLim"} -objectId $ticketID -type @{id=4}
 
-        if ($_.summary.ToString().ToLower().Contains("shadowcontrol itsm")) {
+        if ($_.summary.ToString().ToLower().Contains("shadowcontrol itsm: critical")) {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341 # 341 is the "Modo Networks"
+            Update-Contact -ticketID $ticketID -summary $_.summary
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Application
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 50 # 50 is the subtype for SubType: Backup
+            Update-Item -ticketID $ticketID -summary $_.summary -itemId 3 # 3 is the Item:Failure
+            
+
+        } elseif ($_.summary.ToString().ToLower() -like "Alert for * - Uplink status changed") {
+            Update-Contact -ticketID $ticketID -summary $_.summary
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 44 # 44 is the type for Type: Network
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 14 # 14 is the subtype for SubType: Firewall
+            Update-Item -ticketID $ticketID -summary $_.summary -itemId 2 # 2 is the Item:Change
+            
+
+        } elseif ($_.summary.ToString().ToLower().Contains("shadowcontrol itsm: warning")) {
+            Update-Company -ticketID $ticketID -summary $_.summary -companyid 341 # 341 is the "Modo Networks"
+            Update-Contact -ticketID $ticketID -summary $_.summary
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Application
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 50 # 50 is the subtype for SubType: Backup
+            
+
+        } elseif ($_.summary.ToString().ToLower().Contains("cisco dns daily report")) {
+            Update-Company -ticketID $ticketID -summary $_.summary -companyid 341 # 341 is the "Modo Networks"
+            Update-Contact -ticketID $ticketID -summary $_.summary
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 44 # 44 is the type for Type: Network
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 37 # 37 is the subtype for SubType: DNS
+            
+
+        } elseif ($_.summary.ToString().ToLower() -like "*packages on * are out-of-date") {
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 44 # 44 is the type for Type: Network
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 83 # 83 is the subtype for SubType: SAN
+            Update-Item -ticketID $ticketID -summary $_.summary -itemId 264 # 264 is the Item:Update
+
+        } elseif ($_.summary.ToString().ToLower() -like "*dsm has detected a new login behavior*") {
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Server
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 83 # 83 is the subtype for SubType: SAN
 
         } elseif ($_.summary.ToString().ToLower().Contains("bug fix advisory") -or $_.summary.ToString().ToLower().Contains("enhancement advisory")) {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341 # 341 is the "Modo Networks"
@@ -161,12 +194,12 @@ function main() {
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 29 # 29 is the type for Type: Vendor
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 9706 # 9706 is the subtype for SubType: Redhat
 
-        } elseif ($_.summary.ToString().ToLower() -contains "*consistency check of system volume * on * is complete" -or $_.summary.ToString().ToLower() -contains "*Monthly Drive Health Report on * - Healthy") {
+        } elseif ($_.summary.ToString().ToLower() -like "*consistency check of system volume * on * is complete" -or $_.summary.ToString().ToLower() -like "*consistency check of storage pool * on * has ended" -or $_.summary.ToString().ToLower() -like "*monthly drive health report on * - healthy") {
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 44 # 44 is the type for Type: Network
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 83 # 83 is the subtype for SubType: SAN
             Update-Item -ticketID $ticketID -summary $_.summary -itemId 96 # 96 is the Item:Maintenance
 
-        } elseif ($_.summary.ToString().ToLower().Contains("[OUT OF PROTECTION THRESHOLD]")) {
+        } elseif ($_.summary.ToString().Contains("[OUT OF PROTECTION THRESHOLD]") -or $_.summary.ToString().ToLower() -like "*active backup for business - backup task*") {
             # Must be assign to each company - do not automate this part for this ticket.
             # Update-Company -ticketID $ticketID -summary $_.summary -companyid 341  # 341 is the "Modo Networks"
             # Update-Contact -ticketID $ticketID -summary $_.summary
@@ -193,26 +226,31 @@ function main() {
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 13 # 13 is the type for Type: Server
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 906 # 129 is the subtype for SubType: Service
 
-        }elseif ($_.summary.ToString().ToLower().Contains("your ssl certificate is coming up for renewal.")) {
+        } elseif ($_.summary.ToString().ToLower().Contains("your ssl certificate is coming up for renewal.")) {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341  # 341 is the "Modo Networks"
             Update-Contact -ticketID $ticketID -summary $_.summary
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Application
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 30 # 30 is the subtype for SubType: Website
             Update-Item  -ticketID $ticketID -summary $_.summary -itemId 18 # 18 is the item for Item: Certificate
 
-        } elseif ($_.summary.ToString() -eq "Microsoft 365 security: You have messages in quarantine") {
+        } elseif ($_.summary.ToString() -eq "Microsoft 365 security: you have messages in quarantine") {
             Update-Company -ticketID $ticketID -summary $_.summary -companyid 341  # 341 is the "Modo Networks"
             Update-Contact -ticketID $ticketID -summary $_.summary
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 43 # 43 is the type for Type: Application
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 58 # 58 is the subtype for SubType: Email
             Update-Item  -ticketID $ticketID -summary $_.summary -itemId 502 # 502 is the item for Item: Spam
+
+        } elseif ($_.summary.ToString() -like "[action required] verify that you own*") {
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 44 # 44 is the type for Type: Network
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 830 # 830 is the subtype for SubType: Domain Name
+            Update-Item  -ticketID $ticketID -summary $_.summary -itemId 200 # 200 is the item for Item: Renew
         }
 
         if ($_.summary.ToString().ToLower().Contains("el rio iscsi]drive 5 in rs2414+ is failing")) {
             Update-Summary -ticketID $ticketID -summary "$($_.summary) | Duplicate 376993"
         }
 
-        if ($_.summary.ToString().Contains("[rr-nas-02] Backup statistics alerts on RR-NAS-02") -or $_.summary.ToString().ToLower() -like "*consistency check of system volume * on * is complete" -or $_.summary.ToString().ToLower().Contains("el rio iscsi]drive 5 in rs2414+ is failing") -or $_.summary.ToString().ToLower().Contains("bug fix advisory") -or $_.summary.ToString().ToLower().Contains("enhancement advisory") -or $_.summary.ToString().ToLower() -contains "*Monthly Drive Health Report on * - Healthy" -or $_.summary.ToString().Contains("INTELLA - REORGANIZE")) {
+        if ($_.summary.ToString().Contains("[rr-nas-02] Backup statistics alerts on RR-NAS-02") -or $_.summary.ToString().ToLower() -like "*consistency check of system volume * on * is complete" -or $_.summary.ToString().ToLower().Contains("el rio iscsi]drive 5 in rs2414+ is failing") -or $_.summary.ToString().ToLower().Contains("bug fix advisory") -or $_.summary.ToString().ToLower().Contains("enhancement advisory") -or $_.summary.ToString().ToLower() -like "*monthly drive health report on * - healthy" -or $_.summary.ToString().Contains("INTELLA - REORGANIZE")) {
             Update-Status -ticketID $ticketID -summary $_.summary -statusid 31 # status for completed is 31
         } else {
             Update-Status -ticketID $ticketID -summary $_.summary -statusid 36 # status for Assigned is 36
@@ -220,7 +258,7 @@ function main() {
     }
 
     Write-Output "Querying Unassigned Tickets - Zenith..."
-    $unassignedZenithfTicket = @(Get-CWMTicket -condition '((status/name = "New" or status/name = "New \(email connector\)") and (board/name = "Zenith" or board/name = "Patching" or board/name = "System Performance") and resources = null and (summary not contains "desktop"))')
+    $unassignedZenithfTicket = @(Get-CWMTicket -condition '((status/name = "New" or status/name = "New from RMM" or status/name = "New \(email connector\)") and (board/name = "Zenith" or board/name = "Monitoring" or board/name = "Patching" or board/name = "System Performance") and resources = null and (summary not contains "desktop"))')
 
     $unassignedZenithfTicket | Foreach-Object {
         $ticketID = $_.id
@@ -239,6 +277,14 @@ function main() {
         if ($_.summary.ToString().ToLower().Contains("Server reboot pending after patch installation")) {
             Update-Type -ticketID $ticketID -summary $_.summary -typeID 33 # 33 is the type for Type: Server
             Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 125 # 125 is the subtype for SubType: Update
+
+        } elseif ($_.summary.ToString().ToLower().Contains("4728")) {
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 1817 # 1817 is the type for Type: Server (Zenith Board)
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 9811 # 9811 is the subtype for SubType: Update (Zenith Board)
+
+        } elseif ($_.summary.ToString().ToLower().Contains("VSS writer(s) is/are in failed status at Site")) {
+            Update-Type -ticketID $ticketID -summary $_.summary -typeID 33 # 33 is the type for Type: Server (Zenith Board)
+            Update-SubType -ticketID $ticketID -summary $_.summary -subTypeId 833 # 833 is the subtype for SubType: VSS (Zenith Board)
 
         }
     }
