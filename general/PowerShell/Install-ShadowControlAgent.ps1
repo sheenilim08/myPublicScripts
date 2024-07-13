@@ -28,8 +28,8 @@ function main {
   Invoke-WebRequest $url -OutFile ShadowControl_Installer.msi
   Unblock-File ShadowControl_Installer.msi
 
-  Write-Output "Installing the ShadowControl Agent"  
-  .\ShadowControl_Installer.msi /qn /norestart
+  Write-Output "Installing the ShadowControl Agent"
+  Start-Process msiexec.exe  -Argumentlist "/i .\ShadowControl_Installer.msi /qn /norestart" -wait
 
   Write-Output "Subscribing to $($shadowControlApplianceHost)."
   Set-Location "C:\Program Files (x86)\StorageCraft\CMD"
