@@ -29,12 +29,19 @@ function main {
   Unblock-File ShadowControl_Installer.msi
 
   Write-Output "Installing the ShadowControl Agent"
-  Start-Process msiexec.exe  -Argumentlist "/i .\ShadowControl_Installer.msi /qn /norestart" -wait
+  Start-Process msiexec.exe  -Argumentlist "/i ShadowControl_Installer.msi /qn /norestart /lev ShadowControlInstall.log" -wait
 
   Write-Output "Subscribing to $($shadowControlApplianceHost)."
   Set-Location "C:\Program Files (x86)\StorageCraft\CMD"
   try {
-    .\stccmd.exe subscribe -o "$($orgName):$($siteName)" -U $($username) -P $($password) -m $($type) "$($shadowControlApplianceHost)";
+    $orgAndSite = "";
+    
+    if ($($env:sitename) -eq '') {
+      $orgAndSite = "$($env:orgname):"
+    } else {
+      "$($env:orgname):$($env:sitename)"
+    }
+    .\stccmd.exe subscribe -o "$($orgAndSite)" -U $env:usrname -P $env:password -m $env:type "$($env:shadowcontrolappliancehost)";
     Write-Output "ShadowControl has been installed and subscribed to $($shadowControlApplianceHost)."
   } catch {
     Write-Output "An issue occured while subscribing to $($shadowControlApplianceHost)."
