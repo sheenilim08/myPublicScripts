@@ -20,3 +20,5 @@ function main {
     Write-Output "Installing Teams 2 (New Teams)."
     Start-Process cmd.exe -Argumentlist "bootStrap_Installer.exe -p -o appx_Installer.msix" -wait
 }
+
+main
