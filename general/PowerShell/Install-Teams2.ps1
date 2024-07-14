@@ -18,5 +18,5 @@ function main {
     Unblock-File appx_Installer.msix
 
     Write-Output "Installing Teams 2 (New Teams)."
-    Start-Process cmd.exe -Argumentlist "bootStrap_Installer.exe -p -o appx_Installer.msix"
+    Start-Process cmd.exe -Argumentlist "bootStrap_Installer.exe -p -o appx_Installer.msix" -wait
 }
