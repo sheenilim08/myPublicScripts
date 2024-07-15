@@ -30,7 +30,7 @@ function main {
 
             if (!$softRun) {
                 Write-Output "Would have run Set-ADUser for $($fileData[$i].samaccountname)"
-                Set-ADUser -Identity $_.currenADUser -HomeDirectory $fileData[$i].newhomedirectory
+                Set-ADUser -Identity $currenADUser.Identity -HomeDirectory $fileData[$i].newhomedirectory
             }
 
             $outputObj += $processedADUser
