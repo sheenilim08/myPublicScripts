@@ -6,6 +6,17 @@ function main {
         $appxInstaller = "https://statics.teams.cdn.office.net/production-windows-x64/enterprise/webview2/lkg/MSTeams-x64.msix"
     )
 
+    Write-Output "Cleaning up."
+    if (Test-Path -Path "bootStrapInstaller_Installer.exe") {
+      Write-Output "Deleting bootStrapInstaller_Installer.exe"
+      Remove-Item -Path "bootStrapInstaller_Installer.exe" -Force
+    }
+    
+    if (Test-Path -Path "appx_Installer.msix") {
+      Write-Output "Deleting appx_Installer.msix"
+      Remove-Item -Path "appx_Installer.msix" -Force
+    }
+
     Write-Output "Setting Client Session to TLS1.2"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -18,7 +29,7 @@ function main {
     Unblock-File appx_Installer.msix
 
     Write-Output "Installing Teams 2 (New Teams)."
-    Start-Process cmd.exe -Argumentlist "bootStrap_Installer.exe -p -o appx_Installer.msix" -wait
+    Start-Process bootStrap_Installer.exe -Argumentlist "-p -o appx_Installer.msix" -wait
 }
 
 main
