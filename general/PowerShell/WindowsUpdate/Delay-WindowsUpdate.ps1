@@ -47,11 +47,11 @@ function main {
         Stop-Service -Name CryptSvc -Force
         Stop-Service -Name wuauserv -Force
 
-        $oldWindowsUpdateStore = "C:\Windows\SoftwareDistribtion.old"
+        $oldWindowsUpdateStore = "C:\Windows\SoftwareDistribution.old"
         if (Test-Path -Path $oldWindowsUpdateStore) {
             Remove-Item $oldWindowsUpdateStore -Recurse -Force
-            Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName $oldWindowsUpdateStore
         }
+        Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName $oldWindowsUpdateStore
         
         Write-Output "Start Windows Update Store"
         Start-Service -Name BITS
