@@ -48,8 +48,10 @@ function main {
         Stop-Service -Name wuauserv -Force
 
         $oldWindowsUpdateStore = "C:\Windows\SoftwareDistribtion.old"
-        Remove-Item $oldWindowsUpdateStore -Recurse -Force
-        Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName $oldWindowsUpdateStore
+        if (Test-Path -Path $oldWindowsUpdateStore) {
+            Remove-Item $oldWindowsUpdateStore -Recurse -Force
+            Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName $oldWindowsUpdateStore
+        }
         
         Write-Output "Start Windows Update Store"
         Start-Service -Name BITS
