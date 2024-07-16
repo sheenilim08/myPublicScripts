@@ -30,7 +30,8 @@ function main {
     Write-Output "Defer Feature Updates - $($numberOfDaysToDelay) days."
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "DeferFeatureUpdates" -Value 1
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "DeferFeatureUpdatesPeriodInDays" -Value $numberOfDaysToDelay
-
+    
+    $delayQualityUpdateDays = $numberOfDaysToDelay
     if ($numberOfDaysToDelay -ge 35) {
         # Quality Updates can be delayed by 35 days only.
         $delayQualityUpdateDays = 35
