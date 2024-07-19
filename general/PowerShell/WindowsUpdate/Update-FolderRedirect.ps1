@@ -53,10 +53,10 @@ for ($i=0; $i -lt $profileFolderNames.Length; $i++) {
 
 Write-Output "Updated Folders"
 $timestamp = (Get-Date).ToString("mm-dd-yyyy_hh-mm-ss")
-$filename_logs = "folderRedirectLogs_$($timestamp).csv"
+$filename_logs = "$((pwd).Path)\folderRedirectLogs_$($timestamp).csv"
 
 $updatedFolderPaths | Export-Csv $filename_logs
 $updatedFolderPaths | FT -AutoSize
 
 Write-Output "User $($currentLoggedInUser.USERDOMAIN)\$($currentLoggedInUser.USERNAME) will need to relogin or restart explorer.exe"
-Write-Output "Logs $((pwd).Path)\$($filename_logs)"
+Write-Output "Logs $($filename_logs)"
