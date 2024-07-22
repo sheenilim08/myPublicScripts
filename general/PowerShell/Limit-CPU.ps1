@@ -3,6 +3,7 @@ Get-Process msedge | ForEach-Object { $_.ProcessorAffinity = 1 }
 Get-Process OfficeClickToRun | ForEach-Object { $_.ProcessorAffinity = 1 }
 Get-Process OneDrive | ForEach-Object { $_.ProcessorAffinity = 1 }
 Get-Process ONENOTEM| ForEach-Object { $_.ProcessorAffinity = 1 }
+Get-Process olk | ForEach-Object { $_.ProcessorAffinity = 1 } # Outlook New
 
 Write-Host "Setting teams process to CPU 2"
 Get-Process teams | ForEach-Object { $_.ProcessorAffinity = 2 }
