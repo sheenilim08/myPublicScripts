@@ -1,3 +1,7 @@
+[console]::WindowWidth=300; 
+[console]::WindowHeight=500; 
+[console]::BufferWidth=[console]::WindowWidth
+
 # Code Wrapper used is from
 # https://github.com/christaylorcodes/ConnectWiseManageAPI
 
