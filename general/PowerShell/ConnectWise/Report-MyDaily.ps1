@@ -33,13 +33,13 @@ Connect-CWM @CWMConnectionInfo -Force
 
 $myResourceName = "SLim"
 $myStartDay = [System.DateTime]::ParseExact([System.DateTime]::Now.AddDays(-1).ToString("yyyy-MM-dd") + "T21:00:00Z", "yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
-$myEndDay = [System.DateTime]::ParseExact([System.DateTime]::Now.ToString("yyyy-MM-dd") + "T10:00:00Z", "yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
+$myEndDay = [System.DateTime]::ParseExact([System.DateTime]::Now.ToString("yyyy-MM-dd") + "T11:00:00Z", "yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
 
 
-$closedProfTicket = @(Get-CWMTicket -pageSize 100 -condition "((status/name = 'Completed') and (board/name = 'Professional Services' or board/name = 'Tier 3') and resources contains '$($myResourceName)' and _info/lastUpdated >= [$($myStartDay.TolocalTime())] and _info/updatedBy = '$($myResourceName)')")
+$closedProfTicket = @(Get-CWMTicket -pageSize 300 -condition "((status/name = 'Completed') and (board/name = 'Professional Services' or board/name = 'Tier 3') and resources contains '$($myResourceName)' and _info/lastUpdated >= [$($myStartDay.TolocalTime())] and _info/updatedBy = '$($myResourceName)')")
 $closedProfTicketToday = @()
 
-$closedZenithTicket = @(Get-CWMTicket -pageSize 100 -condition "((status/name = 'Resolved') and (board/name = 'Patching' or board/name = 'System Performance' or board/name = 'Zenith') and resources contains '$($myResourceName)' and _info/lastUpdated >= [$($myStartDay.TolocalTime())] and _info/updatedBy = '$($myResourceName)')")
+$closedZenithTicket = @(Get-CWMTicket -pageSize 300 -condition "((status/name = 'Resolved') and (board/name = 'Patching' or board/name = 'System Performance' or board/name = 'Zenith' or board/name = 'Monitoring') and resources contains '$($myResourceName)' and _info/lastUpdated >= [$($myStartDay.TolocalTime())] and _info/updatedBy = '$($myResourceName)')")
 $closedZenithTicketToday = @()
 
 #$myStartDay = [System.DateTime]::ParseExact([System.DateTime]::Now.AddDays(-1).ToString("yyyy-MM-dd") + "T21:00:00Z", "yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
@@ -100,18 +100,42 @@ $closedZenithTicket | ForEach-Object {
 
 #Get-Content -Path "$($filePath)"
 # my open Tickets
-$openProfTickets = @(Get-CWMTicket -pageSize 100 -condition "((board/name = 'Tier 3' or board/name = 'Professional Services') and resources contains '$($myResourceName)') and (status/name != 'Ticket Review' and status/name != 'Completed' and status/name != 'Acknowledged System Generated message' and status/name not contains 'Closed')")
-$openZenithTickets = @(Get-CWMTicket -pageSize 100 -condition "((board/name = 'Zenith') and resources contains '$($myResourceName)') and (status/name != 'Ticket Review' and status/name  not contains 'Closed' and status/name != 'Resolved' and status/name != 'Acknowledged System Generated message' and  summary not contains 'Managed Desktop Patch')")
+$openProfTickets = @(Get-CWMTicket -pageSize 300 -condition "((board/name = 'Tier 3' or board/name = 'Professional Services') and resources contains '$($myResourceName)') and (status/name != 'Ticket Review' and status/name != 'Completed' and status/name != 'Acknowledged System Generated message' and status/name not contains 'Closed')")
+$openZenithTickets = @(Get-CWMTicket -pageSize 300 -condition "((board/name = 'Zenith' or board/name = 'Monitoring') and resources contains '$($myResourceName)') and (status/name != 'Ticket Review' and status/name  not contains 'Closed' and status/name != 'Resolved' and status/name != 'Acknowledged System Generated message' and  summary not contains 'Managed Desktop Patch')")
 
 $openZenithP1 = 0
+$updatedOpenZenithP1 = 0
+
 $openZenithP3 = 0
+$updatedOpenZenithP3 = 0
+
 $openZenithP4 = 0
+$updatedOpenZenithP4 = 0
 $openZenithTickets | ForEach-Object {
     # check if last update was from today
+    $ticket_datetime = [System.DateTime]::ParseExact($_._info.lastUpdated.ToString(), "yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
+    $ticket_lastUpdated = $ticket_datetime.ToLocalTime()
+
     switch ($_.priority.name) {
-        "Priority 1 - Emergency Response" { $openZenithP1++ }
-        "Priority 3 - Normal Response" { $openZenithP3++ }
-        "Priority 4 - Low Impact" { $openZenithP4++ }
+        "Priority 1 - Emergency Response" { 
+            $openZenithP1++ 
+            if ($ticket_lastUpdated -ge $myStartDay.ToLocalTime() -and $ticket_lastUpdated -le $myEndDay.ToLocalTime() ) {
+                $updatedOpenZenithP1++
+            }
+        }
+        "Priority 3 - Normal Response" { 
+            $openZenithP3++ 
+            if ($ticket_lastUpdated -ge $myStartDay.ToLocalTime() -and $ticket_lastUpdated -le $myEndDay.ToLocalTime() ) {
+                $updatedOpenZenithP3++
+            }
+        }
+        "Priority 4 - Low Impact" { 
+            $openZenithP4++ 
+            if ($ticket_lastUpdated -ge $myStartDay.ToLocalTime() -and $ticket_lastUpdated -le $myEndDay.ToLocalTime() ) {
+                $updatedOpenZenithP4++
+            }
+
+        }
 
         default { } # do nothing
     }
@@ -127,6 +151,7 @@ function buildTicketObject($collection, $currentTicket, $ticket_lastupdate_datet
     $this_updated_ticket | Add-Member -MemberType NoteProperty -Name TicketID -Value $currentTicket.id
     $this_updated_ticket | Add-Member -MemberType NoteProperty -Name Company -Value $currentTicket.company.name
     $this_updated_ticket | Add-Member -MemberType NoteProperty -Name Summary -Value $currentTicket.summary
+    $this_updated_ticket | Add-Member -MemberType NoteProperty -Name Status -Value $currentTicket.status.name
     $this_updated_ticket | Add-Member -MemberType NoteProperty -Name lastUpdated -Value $ticket_lastupdate_datetime.ToLocalTime()
 
     return $this_updated_ticket
@@ -169,13 +194,13 @@ $reportFileName = "$($myResourceName)-$($myStartDay.ToString('MM-dd-yyyy-dddd'))
 $filePath = "$($env:USERPROFILE)\OneDrive - Modo Networks\Documents\Scripts\Daily Report\$($reportFileName)"
 $emlFilePath = "$($env:USERPROFILE)\OneDrive - Modo Networks\Documents\Scripts\Daily Report\$($reportEmail)"
 
-New-Item -Path $filePath -ItemType File
+New-Item -Path $filePath -ItemType File -Force
 
 Write-Output "Updated Professional Tickets: $($updatedTickets.Count)" | Out-File -FilePath "$($filePath)" -Append
-$updatedTickets | Sort-Object lastUpdated | FT TicketID, Company, Summary, lastUpdated -AutoSize | Out-File -FilePath "$($filePath)" -Append -Force
+$updatedTickets | Sort-Object lastUpdated | FT TicketID, Status, Company, Summary, lastUpdated -AutoSize | Out-File -FilePath "$($filePath)" -Append -Force
 
 Write-Output "NotUpdated Professional Tickets: $($nonUpdatedTickets.Count)" | Out-File -FilePath "$($filePath)" -Append -Force
-$nonUpdatedTickets | Sort-Object lastUpdated | FT TicketID, Company, Summary, lastUpdated -AutoSize | Out-File -FilePath "$($filePath)" -Append -Force
+$nonUpdatedTickets | Sort-Object lastUpdated | FT TicketID, Status, Company, Summary, lastUpdated -AutoSize | Out-File -FilePath "$($filePath)" -Append -Force
 
 Write-Output "Closed Professional Tickets: $($closedProfTicketToday.Count)" | Out-File -FilePath "$($filePath)" -Append -Force
 $closedProfTicketToday | Sort-Object lastUpdated | FT id, summary, lastUpdated -AutoSize | Out-File -FilePath "$($filePath)" -Append -Force
@@ -239,13 +264,13 @@ $emailHtmlBody = '
         </div>
             <ul>
                 <li>
-                    <span>0/' + $openZenithP1 + ' P1s Updated, ' + $closedZenithP1 + ' Closed<br></span>
+                    <span>' + $updatedOpenZenithP1 + '/' + $openZenithP1 + ' P1s Updated, ' + $closedZenithP1 + ' Closed<br></span>
                 </li>
                 <li>
-                    <span>0/' + $openZenithP3 + ' P3s Updated, ' + $closedZenithP3 + ' Closed<br></span>
+                    <span>' + $updatedOpenZenithP3 + '/' + $openZenithP3 + ' P3s Updated, ' + $closedZenithP3 + ' Closed<br></span>
                 </li>
                 <li>
-                    <span>0/' + $openZenithP4 + ' P4s Updated, ' + $closedZenithP4 + ' Closed<br></span>
+                    <span>' + $updatedOpenZenithP4 + '/' +$openZenithP4 + ' P4s Updated, ' + $closedZenithP4 + ' Closed<br></span>
                 </li>
             </ul>
         <div>
@@ -306,8 +331,8 @@ $emailHtmlBody = '
 $outlook = new-object -comobject outlook.application
 
 $email = $outlook.CreateItem(0)
-#$email.To = "overnight@ModoNetworks.Net"
-$email.To = "slim@ModoNetworks.Net"
+$email.To = "overnight@ModoNetworks.Net"
+#$email.To = "slim@ModoNetworks.Net"
 $email.Subject = "Afterhours Turn Over | Sheen | $($myStartDay.ToString("MMMM dd yyyy"))"
 $email.HTMLBody = $emailHtmlBody
 $email.Attachments.add($filePath)
