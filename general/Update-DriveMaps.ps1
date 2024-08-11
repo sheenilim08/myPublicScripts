@@ -46,29 +46,29 @@ for ($i=0; $i -lt $desktopShortcutItems.Length; $i++) {
     $currentShortcutFile = $desktopShortcutItems[$i]
     
     $shell = New-Object -COM WScript.Shell
-    $shortcut = $shell.CreateShortcut($currentShortcutFile)  ## Open the lnk
+    $shortcut = $shell.CreateShortcut($currentShortcutFile.FullName)  ## Open the lnk
     
-    if ($shortcut.TargetPath -like "$($OldServer)*") {
+    if ($shortcut.TargetPath.ToLower() -like "$($OldServer)*") {
         $newTargetPath = $shortcut.TargetPath.ToLower().Replace($OldServer, $NewServer)
-        $renamedOldFileName = "Old $($desktopShortcutItems[$i].name)"
+        $renamedOldFileName = "Old $($currentShortcutFile.name)"
         $backupFile = "$($desktopPath)\$($renamedOldFileName)"
 
-        $shotcutObj = New-Object -TypeName PSObject
-        $shotcutObj | Add-Member -MemberType NoteProperty -Name Name -Value $currentShortcutFile.name
-        $shotcutObj | Add-Member -MemberType NoteProperty -Name OldPath -Value $shortcut.TargetPath
-        $shotcutObj | Add-Member -MemberType NoteProperty -Name NewPath -Value $newTargetPath
-        $shotcutObj | Add-Member -MemberType NoteProperty -Name BackupFile -Value $renamedOldFileName
+        $shortcutObj = New-Object -TypeName PSObject
+        $shortcutObj | Add-Member -MemberType NoteProperty -Name Name -Value $currentShortcutFile.name
+        $shortcutObj | Add-Member -MemberType NoteProperty -Name OldPath -Value $shortcut.TargetPath
+        $shortcutObj | Add-Member -MemberType NoteProperty -Name NewPath -Value $newTargetPath
+        $shortcutObj | Add-Member -MemberType NoteProperty -Name BackupFile -Value $renamedOldFileName
 
-        Write-Host "Updating desktop item: $($desktopShortcutItems[$i].name)"
+        Write-Host "Updating desktop item: $($currentShortcutFile.name)"
 
         if (!$softRun) {
-            Copy-Item $desktopShortcutItems[$i] $backupFile  ## Create a backup copy of the .lnk file.
+            Copy-Item $currentShortcutFile.FullName $backupFile  ## Create a backup copy of the .lnk file.
 
-            $shortcut.TargetPath =  $newTargetPath ## Make changes
+            $shortcut.TargetPath = $newTargetPath ## Make changes
             $shortcut.Save()  ## Save
         }
 
-        $updatedShortcuts += $shotcutObj
+        $updatedShortcuts += $shortcutObj
     }
 
 }
