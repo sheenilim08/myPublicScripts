@@ -6,7 +6,7 @@ param(
     $CWEndpoint, 
     $CWCompanyID,
     $CWPublicKey,
-    $CWPrivateKey.
+    $CWPrivateKey,
     $CWClientID
 )
 
