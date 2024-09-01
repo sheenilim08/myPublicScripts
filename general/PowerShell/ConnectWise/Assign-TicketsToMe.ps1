@@ -502,6 +502,9 @@ function main() {
             Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 35 # 33 is the type for Type: Server (Zenith Board)
             Update-SubType -ticketID $ticketID -summary $thisTicket.summary -subTypeId 833 # 833 is the subtype for SubType: VSS (Zenith Board)
 
+        } elseif ($thisTicket.summary.ToString() -like "* - CONDITION - CPU Utilization is greater than equals threshold") {
+            Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1845 #  is the type for Type: Server (System Performance Board)
+
         }
     }
 
