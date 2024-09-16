@@ -126,7 +126,7 @@ function updateCompanyBySynAppliance($thisTicket) {
         }
         {$_ -like "*alpha-nfs-syn*" -or $_ -like "*alpha-remote*" -or $_ -like "*alpha-bu-syn*" -or $_ -like "*alpha-nfs2*" -or 
          $_ -like "*alpha-hyperv1*" -or $_ -like "*dc-server*" -or $_ -like "*file-server*" -or $_ -like "*fm-server*" -or $_ -like "*fm-server2*" -or 
-         $_ -like "*web-server*" -or $_ -like "*web-server2*"} {
+         $_ -like "*web-server*" -or $_ -like "*web-server2*"} {
             Update-Company -ticketID $ticketID -summary $thisTicket.summary -companyid 12191  # 12191 is the "Alpha Energy Labs - Bio Aquatic"
         }
         {$_ -like "*gingermarie*"} {
@@ -472,8 +472,8 @@ function main() {
     }
 
     Write-Output "Querying Unassigned Tickets - Zenith..."
-    $unassignedZenithfTicket = @(Get-CWMTicket -condition '((status/name = "New" or status/name = "New from RMM" or status/name = "New \(email connector\)") and (board/name = "Zenith" or board/name = "Monitoring" or board/name = "Patching" or board/name = "System Performance") and resources = null and (summary not contains "desktop"))')
-
+    #$unassignedZenithfTicket = @(Get-CWMTicket -pageSize 500 -condition '((status/name = "New" or status/name = "New from RMM" or status/name = "New \(email connector\)") and (board/name = "Zenith" or board/name = "Monitoring" or board/name = "Patching" or board/name = "System Performance") and (resources = null) and !(summary contains "desktop"))')
+    $unassignedZenithfTicket = @(Get-CWMTicket -pageSize 300 -condition '((status/name = "New" or status/name = "New from RMM" or status/name = "New \(email connector\)") and (board/name = "Zenith" or board/name = "Monitoring" or board/name = "Patching" or board/name = "System Performance") and resources = null and ((summary not contains "desktop") and ((summary contains "DiskVolume") or (summary like "%CONDITION - Snapshot Lifespan is greater than%") or (summary like "%CONDITION - CPU Utilization is greater than equals threshold%") or (summary contains "is offline for 15 minutes") or (summary contains "MONITOR - User account added") or (priority/name = "Priority 1 - Emergency Response"))))')
     #$unassignedZenithfTicket | Foreach-Object {
     for ($i = 0; $i -lt $unassignedZenithfTicket.Length; $i++) {
         $thisTicket =  $unassignedZenithfTicket[$i];
@@ -489,7 +489,6 @@ function main() {
         Write-Output "Updating Resources and Ticket Owner for $($ticketID) $($thisTicket.summary)"
         Update-CWMTicket @ticketOwner | Out-Null
     #    New-CWMScheduleEntry -member @{identifier = "SLim"} -objectId $ticketID -type @{id=4}
-
         if ($thisTicket.summary.ToString().ToLower().Contains("Server reboot pending after patch installation")) {
             Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 33 # 33 is the type for Type: Server
             Update-SubType -ticketID $ticketID -summary $thisTicket.summary -subTypeId 125 # 125 is the subtype for SubType: Update
@@ -498,12 +497,26 @@ function main() {
             Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1817 # 1817 is the type for Type: Server (Zenith Board)
             Update-SubType -ticketID $ticketID -summary $thisTicket.summary -subTypeId 9811 # 9811 is the subtype for SubType: Update (Zenith Board)
 
-        } elseif ($thisTicket.summary.ToString().ToLower().Contains("VSS writer(s) is/are in failed status at Site")) {
+        } elseif ($thisTicket.summary.ToString().ToLower() -like "*vss writer(s) is/are in failed status at site*") {
             Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 35 # 33 is the type for Type: Server (Zenith Board)
             Update-SubType -ticketID $ticketID -summary $thisTicket.summary -subTypeId 833 # 833 is the subtype for SubType: VSS (Zenith Board)
 
+        } elseif ($thisTicket.summary.ToString().ToLower() -like "*windows service*") {
+            Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1817 # 1817 is the type for Type: Server
+            Update-SubType -ticketID $ticketID -summary $thisTicket.summary -subTypeId 9811 # 9811 is the subtype for SubType: Service
+
+        } elseif ($thisTicket.summary.ToString().ToLower() -like "*diskVolume free space for*is less than*" -and $thisTicket.priority.name -eq "Priority 1 - Emergency Response") {
+            Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1817 # 1817 is the type for Type: Server
+            Update-SubType -ticketID $ticketID -summary $thisTicket.summary -subTypeId 9810 # 9810 is the subtype for SubType: DiskSpace
+
+        } elseif ($thisTicket.summary.ToString().ToLower() -like "*device '*' is offline for 15 minutes*" -and $thisTicket.priority.name -eq "Priority 1 - Emergency Response") {
+            Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1817 # 1817 is the type for Type: Server
+
         } elseif ($thisTicket.summary.ToString() -like "* - CONDITION - CPU Utilization is greater than equals threshold") {
             Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1845 #  is the type for Type: Server (System Performance Board)
+
+        } elseif ($thisTicket.summary.ToString() -like "* - CONDITION - Snapshot Lifespan is greater than...") {
+            Update-Type -ticketID $ticketID -summary $thisTicket.summary -typeID 1817 #  is the type for Type: Server (Monitoring Board)
 
         }
     }
