@@ -1,55 +1,103 @@
 $startRunningServices = [System.Boolean]::Parse($env:startrunningservices)
 $filenameSuffix = $env:filenamesuffix
 
-function Test-Services {
-  param($filenameSuffix)
 
-  Write-Host "Checking Services."
-  $csvFile = "C:\Windows\System32\pre-reboot-service-status_$($filenameSuffix).csv"
-  Write-Host "Loading CSV File '$($csvFile)'"
-  $csvServiceList = Import-Csv -Path "$($csvFile)"
+$services_csvFile = ""
+$ipconfig_csvFile = ""
+$volume_csvFile = ""
+
+function main {
+  if ($null -eq $filenameSuffix -or $filenameSuffix -eq "") {
+    $services_csvFile = "C:\Windows\System32\pre-reboot-service-status.csv"
+    #$ipconfig_csvFile = "C:\Windows\System32\pre-reboot-ipconfig.csv"
+    #$volume_csvFile = "C:\Windows\System32\pre-reboot-partitions.csv"
+  } else {
+    $services_csvFile = "C:\Windows\System32\pre-reboot-service-status_$($filenameSuffix).csv"
+    #$ipconfig_csvFile = "C:\Windows\System32\pre-reboot-ipconfig_$($filenameSuffix).csv"
+    #$volume_csvFile = "C:\Windows\System32\pre-reboot-partitions_$($filenameSuffix).csv"
+  }
+  
+  if (-Not (Test-Path -LiteralPath $services_csvFile)) {
+    Write-Host "Unable to locate the services csv file $($services_csvFile)"
+    Write-Host "<br><br>See Documentation: https://modo-networks-llc.itglue.com/1749534/docs/17159216<br>"
+    exit 1
+  }
+  
+  #if (-Not (Test-Path -LiteralPath $ipconfig_csvFile)) {
+  #  Write-Host "Unable to locate the ipconfig csv file $($ipconfig_csvFile)"
+  #  exit 1
+  #}
+  
+  #if (-Not (Test-Path -LiteralPath $volume_csvFile)) {
+  #  Write-Host "Unable to locate the volumes csv file $($volume_csvFile)"
+  #  exit 1
+  #}
+
+  Write-Host "<br>Checking Services."
+  Write-Host "<br>Loading CSV File '$($services_csvFile)'<br><br>"
+  $csvServiceList = Import-Csv -Path "$($services_csvFile)"
+
+  $serviceFailedOrMissing = @()
 
   for ($i=0; $i -lt $csvServiceList.Length; $i++) {
+    if ($csvServiceList[$i].Name.Contains("CaptureService_") -or # CaptureService_
+    $csvServiceList[$i].Name.Contains("CDPUserSvc_") -or # Connected Devices Platform User Service_
+    $csvServiceList[$i].Name.Contains("ConsentUxUserSvc_") -or # ConsentUX User Service_
+    $csvServiceList[$i].Name.Contains("PimIndexMaintenanceSvc_") -or # Contact Data_
+    $csvServiceList[$i].Name.Contains("CredentialEnrollmentManagerUserSvc_") -or # CredentialEnrollmentManagerUserSvc_
+    $csvServiceList[$i].Name.Contains("DeviceAssociationBrokerSvc_") -or # DeviceAssociationBroker_
+    $csvServiceList[$i].Name.Contains("DevicePickerUserSvc_") -or # DevicePicker_
+    $csvServiceList[$i].Name.Contains("UdkUserSvc_") -or # Udk User Service_
+    $csvServiceList[$i].Name.Contains("UnistoreSvc_") -or # User Data Storage_
+    $csvServiceList[$i].Name.Contains("UserDataSvc_") -or # User Data Access_
+    $csvServiceList[$i].Name.Contains("WpnUserService_") -or # Windows Push Notifications User Service_
+    $csvServiceList[$i].Name.Contains("DevicesFlowUserSvc_") -or # DevicesFlow_
+    $csvServiceList[$i].Name.Contains("PrintWorkflowUserSvc_") -or # PrintWorkflow_
+    $csvServiceList[$i].Name.Contains("OneSyncSvc_") -or # Sync Host_
+    $csvServiceList[$i].Name.Contains("cbdhsvc_")) { # Clipboard User Service_
+      # These services are dynamically created as users connect to a RDS server
+      # Skip check
+      continue;
+    }
+    
     $currentServiceOutputDisplayName = "'$($csvServiceList[$i].Name)' - '$($csvServiceList[$i].DisplayName)'"
     $currentService = Get-Service -Name $csvServiceList[$i].Name -ErrorAction SilentlyContinue
 
     if ($null -eq $currentService) {
-      Write-Host "Service $($currentServiceOutputDisplayName) cannot be found, perhaps this service was removed pre reboot."
+      Write-Host "<br>Service $($currentServiceOutputDisplayName) cannot be found, perhaps this service was removed or renamed post reboot.<br>"
+      $serviceFailedOrMissing += $csvServiceList[$i]
       continue;
     }
 
     if ($currentService.Status -ne $csvServiceList[$i].Status -and $csvServiceList[$i].Status -eq "Running") {
       if ($startRunningServices) {
-        Write-Host "Starting $($currentServiceOutputDisplayName)"
-        Start-Service -Name $currentService.Name
+        Write-Host "<br>Starting $($currentServiceOutputDisplayName)<br>"
+        try {
+          Start-Service -Name $currentService.Name -ErrorAction Stop
+        } catch {
+          $serviceFailedOrMissing += $csvServiceList[$i]
+          continue;
+        }
+        
       } else {
         Write-Host "Would have started $($currentServiceOutputDisplayName)"
       }
     }
   }
-  
-  Write-Host "Finished Checking Services"
-}
 
-function Test-IPInterface {
-  param($filenameSuffix)
-
-  Write-Host "Checking IP Interfaces"
-  $ipAddresses = Get-NetIPAddress | Where-Object {$_.AddressFamily -eq "IPv4"} | Select-Object InterfaceIndex, InterfaceAlias, IPAddress
-
-  $csvFile = "C:\Windows\System32\pre-reboot-service-status_$($filenameSuffix).csv"
-  Write-Host "Loading CSV File '$($csvFile)'"
-  $csvFileIPInterfacesPreReboot = Import-Csv -Path "$($csvFile)"
-
-  for ($i=0; $i -lt $csvFileIPInterfacesPreReboot.Length; $i++) {
-    $currentIntIndex = Get-NetIPAddress -InterfaceIndex $csvFileIPInterfacesPreReboot[$i].InterfaceIndex -AddressFamily IPv4
-
-    
+  if ($serviceFailedOrMissing.Length -gt 0) {
+    Write-Host "<br><br>The following Serivces cannot be started.<br>"
+    for ($i=0; $i -lt $serviceFailedOrMissing.Length; $i++) {
+        Write-host "$($serviceFailedOrMissing[$i].Name) - $($serviceFailedOrMissing[$i].DisplayName)<br>"
+    }
+    Write-Host "<br><br>See Documentation: https://modo-networks-llc.itglue.com/1749534/docs/17159216<br>"
+    exit 1;
   }
 }
 
-function main {
-  Test-Services -filenameSuffix $filenameSuffix
+try {
+  main
+} catch {
+  Write-Error $_
+  exit 2
 }
-
-main
