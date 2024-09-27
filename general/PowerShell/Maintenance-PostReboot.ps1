@@ -54,6 +54,9 @@ function main {
     $csvServiceList[$i].Name.Contains("DevicesFlowUserSvc_") -or # DevicesFlow_
     $csvServiceList[$i].Name.Contains("PrintWorkflowUserSvc_") -or # PrintWorkflow_
     $csvServiceList[$i].Name.Contains("OneSyncSvc_") -or # Sync Host_
+    $csvServiceList[$i].Name.Contains("aella_") -or # Windows Agent Sensor *
+    $csvServiceList[$i].Name.Contains("WdiSystemHost") -or # Diagnostic System Host
+    $csvServiceList[$i].Name.Contains("smphost") -or # Microsoft Storage Spaces SMP
     $csvServiceList[$i].Name.Contains("cbdhsvc_")) { # Clipboard User Service_
       # These services are dynamically created as users connect to a RDS server
       # Skip check
