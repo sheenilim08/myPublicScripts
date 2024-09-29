@@ -72,9 +72,19 @@ function main {
       continue;
     }
 
-    if ($currentService.Status -ne $csvServiceList[$i].Status -and $csvServiceList[$i].Status -eq "Running") {
+    if ($currentService.Status -eq "Starting") {
+      Start-Sleep -Seconds 30
+      
+      if ($currentService.Status -eq "Starting") {
+        Write-Host "`n Service '$($csvServiceList[$i].Name)' - '$($csvServiceList[$i].DisplayName)' is stuck at starting.`n"
+        $serviceFailedOrMissing += $csvServiceList[$i]
+        continue;
+      }
+    }
+
+    if (($currentService.Status -eq "Stopped") -and ($csvServiceList[$i].Status -eq "Running")) {
       if ($startRunningServices) {
-        Write-Host "<br>Starting $($currentServiceOutputDisplayName)<br>"
+        Write-Host "`nStarting $($currentServiceOutputDisplayName)`n"
         try {
           Start-Service -Name $currentService.Name -ErrorAction Stop
         } catch {
