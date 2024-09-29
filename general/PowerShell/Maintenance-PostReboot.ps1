@@ -61,6 +61,9 @@ function main {
     $csvServiceList[$i].Name.Contains("AarSvc_") -or # Agent Activation Runtime
     $csvServiceList[$i].Name.Contains("BcastDVRUserService_") -or # GameDVR and Broadcast User Service
     $csvServiceList[$i].Name.Contains("MessagingService_") -or # MessagingService
+    $csvServiceList[$i].Name.Contains("BluetoothUserService_") -or # Bluetooth User Support Service
+    $csvServiceList[$i].Name.Contains("GoogleUpdaterService") -or # GoogleUpdater Service
+    $csvServiceList[$i].Name.Contains("GoogleUpdaterInternalService") -or # GoogleUpdater InternalService
     $csvServiceList[$i].Name.Contains("cbdhsvc_")) { # Clipboard User Service_
       # These services are dynamically created as users connect to a RDS server
       # Skip check
