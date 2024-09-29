@@ -56,7 +56,11 @@ function main {
     $csvServiceList[$i].Name.Contains("OneSyncSvc_") -or # Sync Host_
     $csvServiceList[$i].Name.Contains("aella_") -or # Windows Agent Sensor *
     $csvServiceList[$i].Name.Contains("WdiSystemHost") -or # Diagnostic System Host
+    $csvServiceList[$i].Name.Contains("WdiServiceHost") -or # Diagnostic Service Host
     $csvServiceList[$i].Name.Contains("smphost") -or # Microsoft Storage Spaces SMP
+    $csvServiceList[$i].Name.Contains("AarSvc_") -or # Agent Activation Runtime
+    $csvServiceList[$i].Name.Contains("BcastDVRUserService_") -or # GameDVR and Broadcast User Service
+    $csvServiceList[$i].Name.Contains("MessagingService_") -or # MessagingService
     $csvServiceList[$i].Name.Contains("cbdhsvc_")) { # Clipboard User Service_
       # These services are dynamically created as users connect to a RDS server
       # Skip check
