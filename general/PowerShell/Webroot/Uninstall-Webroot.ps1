@@ -31,7 +31,7 @@ function main {
 
     if ([System.Boolean]::Parse($rebootafter)) {
         Write-Host "Rebooting endpoint"
-        Restart-Computer -Timeout 0
+        Restart-Computer
         
     } else {
       Write-Host "Skipping Reboot. Reboot is required to complete uninstall."
