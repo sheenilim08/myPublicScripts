@@ -1,27 +1,11 @@
+$shadowControlApplianceHost = $env:shadowcontrolappliancehost_param
+$siteToken = $env:sitetoken_param
+$orgName = $env:orgname_param
+$siteName = $env:sitename_param
+$type= $env:type_param
+$url=$env:url_param
+
 function main {
-  param(
-    [Parameter(HelpMessage="The host where the shadowcontrol will report to.")]
-    $shadowControlApplianceHost, 
-
-    [Parameter(HelpMessage="The admin username that will be used to login to the host.")]
-    $username, 
-
-    [Parameter(HelpMessage="The Organization that the agent will belong to.")]
-    $password, 
-
-    [Parameter(HelpMessage="The Organization that the agent will belong to.")]
-    $orgName,
-    
-    [Parameter(HelpMessage="The Organization that the agent will belong to.")]
-    $siteName, 
-
-    [Parameter(HelpMessage="The type of endpoint to be added. Values can be 'Desktop' 'Server' 'Laptop', 'Virtual'")]
-    $type="server", 
-
-    [Parameter(HelpMessage="The url where to download the Shadow Control Agent.")]
-    $url="https://downloads.storagecraft.com/_shadowcontrol/ShadowControl_Installer_4.3_en.msi"
-  )
-
   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
   Write-Output "Downloading from '$($url)'"
@@ -36,16 +20,16 @@ function main {
   try {
     $orgAndSite = "";
     
-    if ($($env:sitename) -eq '') {
-      $orgAndSite = "$($env:orgname):"
+    if ($($siteName) -eq '') {
+      $orgAndSite = "$($orgName):"
     } else {
-      "$($env:orgname):$($env:sitename)"
+      $orgAndSite = "$($orgName):$($siteName)"
     }
-    .\stccmd.exe subscribe -o "$($orgAndSite)" -U $env:usrname -P $env:password -m $env:type "$($env:shadowcontrolappliancehost)";
+    .\stccmd.exe subscribe -o "$($orgAndSite)" -T $siteToken -m $type "$($shadowControlApplianceHost)";
     Write-Output "ShadowControl has been installed and subscribed to $($shadowControlApplianceHost)."
   } catch {
     Write-Output "An issue occured while subscribing to $($shadowControlApplianceHost)."
   }
 }
 
-main -shadowControlApplianceHost "myhost" -username "username" -password "password" -orgName "orgName" -siteName "siteName" -type "server" -url "https://downloads.storagecraft.com/_shadowcontrol/ShadowControl_Installer_4.3_en.msi"
+main
