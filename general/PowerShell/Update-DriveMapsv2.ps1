@@ -1,10 +1,11 @@
 $OldServer = $env:input_oldserver
 $NewServer = $env:input_newservername
 
-$softRun = [System.Boolean]::Parse($env:input_softrun)
-$mappedDrivesOnly = [System.Boolean]::Parse($env:mappeddrivesonly)
-$desktopShortCutsOnly = [System.Boolean]::Parse($env:desktopshortcutsonly)
-$printersOnly = [System.Boolean]::Parse($env:input_sprintersonlyoftrun)
+$softRun = [System.Boolean]::Parse($env:softrun_param)
+$mappedDrivesOnly = [System.Boolean]::Parse($env:mappeddrives_param)
+$desktopShortCutsOnly = [System.Boolean]::Parse($env:desktopshortcuts_param)
+$printersOnly = [System.Boolean]::Parse($env:remapprinters_param)
+$removeOldPrinterMappings = [System.Boolean]::Parse($env:removeoldprinters_param)
 
 $OldServer = $OldServer.ToLower()
 $NewServer = $NewServer.ToLower()
@@ -13,7 +14,6 @@ $driveHistory = @()
 
 $currentLoggedInUser = Get-ItemProperty -Path HKCU:"Volatile Environment"
 
-Write-Host "Getting the Network Drives for $($currentLoggedInUser.USERDOMAIN)\$($currentLoggedInUser.USERNAME)"
 
 function returnMappedDrives() {
     $networkDrives = $null
@@ -51,6 +51,7 @@ function returnMappedDrives() {
 }
 
 if ($mappedDrivesOnly) {
+    Write-Host "Getting the Network Drives for $($currentLoggedInUser.USERDOMAIN)\$($currentLoggedInUser.USERNAME)"
     $driveMaps = @(returnMappedDrives)
     #$driveMaps = Get-WmiObject win32_logicaldisk | Where-Object { $_.ProviderName -ne $null -and $_.ProviderName.ToLower() -like "$($OldServer)*" } 
     #$driveMaps = Get-WmiObject win32_logicaldisk
@@ -127,3 +128,30 @@ if ($desktopShortCutsOnly) {
     $updatedShortcuts | Format-Table -AutoSize
 }
 
+if ($printersOnly) {
+    $mappedPrinters = @(Get-Printer -Name "$($OldServer)\*")
+
+    $newMappedPrinters = @()
+    for ($i=0; $i -lt $mappedPrinters.Length; $i++) {
+        $newMappedPrinterPath = $mappedPrinters[$i].Name.ToLower().Replace($OldServer.ToLower(), $NewServer.ToLower())
+
+        if (!$softRun) {
+            Write-Host "Adding New Printer Mapping $($newMappedPrinterPath)"
+            Add-Printer -ConnectionName $newMappedPrinterPath
+
+            if ($removeOldPrinterMappings) {
+                Write-Host "Removing Old Printer Mapping $($mappedPrinters[$i].Name)"
+                Remove-Printer -Name $mappedPrinters[$i].Name
+            }
+        }
+
+        $newMappedPrinter = New-Object -TypeName PSObject
+        $newMappedPrinter | Add-Member -MemberType NoteProperty -Name OldMappedPrinter -Value $mappedPrinters[$i].Name
+        $newMappedPrinter | Add-Member -MemberType NoteProperty -Name NewMappedPrinter -Value $newMappedPrinterPath
+        $newMappedPrinter | Add-Member -MemberType NoteProperty -Name IsOldPrinterMapRemoved -Value $removeOldPrinterMappings
+        $newMappedPrinters += $newMappedPrinter
+    }
+
+    Write-Host "Added Printer Mappings"
+    $newMappedPrinters | Format-Table OldMappedPrinter, NewMappedPrinter, IsOldPrinterMapRemoved -AutoSize
+}
