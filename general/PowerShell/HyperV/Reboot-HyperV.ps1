@@ -1,19 +1,23 @@
 $checkMode = $env:checkmode_param
-
+$documentationLnk = $env:documentationlnk_param
 function preReboot {
-    Write-Output "Generating list for online Hyper V VMs."
+    Write-Host "Generating list for online Hyper V VMs. <br>"
     $currentTimeDate = (get-date).ToString('MMM-dd-yyyy_HH-mm-ss')
     $preferedVmListFileName = "Reboot-HyperV_$($env:computername)_$($currentTimeDate).csv"
     
     $vms = Get-VM
     $vms | Export-Csv -Path "C:\Windows\System32\Reboot-HyperV_vmList.csv" -Force
-    $vms | Export-Csv -Path "C:\Windows\System32\$($preferedVmListFileName)"    
+    $vms | Export-Csv -Path "C:\Windows\System32\$($preferedVmListFileName)"
+
+    return $vms
 }
 
 function shutdownVMs {
-    Write-Output "Shutting Down VMs"
+    param ($vms)
+
+    Write-Host "Shutting Down VMs <br>"
     for ($i = 0; $i -lt $vms.Length; $i++) {
-        Write-Output "Shutting down $($vms[$i].Name)"
+        Write-Host "Shutting down $($vms[$i].Name)"
         Stop-VM -Name "$($vms[$i].Name)" -Force
     }
 }
@@ -23,7 +27,13 @@ function rebootHyperVHost {
 }
 
 function postReboot {
-    Write-Output "Comparing VM status to C:\Windows\System32\Reboot-HyperV_vmList.csv"
+    Write-Host "Comparing VM status to C:\Windows\System32\Reboot-HyperV_vmList.csv <br>"
+    if (-not (Test-Path -Path "C:\Windows\System32\Reboot-HyperV_vmList.csv")) {
+        Write-Host "The VM list file does not exist. <br>"
+        Write-Host "<br>Documentation: $($documentationLnk)"
+        return 1
+    }
+
     $postRebootVMStatus = Import-Csv -Path "C:\Windows\System32\Reboot-HyperV_vmList.csv"
 
     $hasErrors = $false
@@ -36,16 +46,17 @@ function postReboot {
             try {
                 Get-VM -Name "$($currentVMInFile.Name)" -ErrorAction Stop
             } catch {
-                Write-Output "Failed to start VM: $($currentVMInFile.Name)."
+                Write-Host "Failed to start VM: $($currentVMInFile.Name). <br>"
                 $hasErrors = $true
             }
 
-            Write-Output "Starting VM $($currentVMInFile.Name)"
+            Write-Host "Starting VM $($currentVMInFile.Name) <br>"
             Start-VM -Name "$($currentVMInFile.Name)"
         }
     }
 
     if ($hasErrors) {
+        Write-Host "<br>Documentation: $($documentationLnk)"
         return 1
     }
 
@@ -55,8 +66,8 @@ function postReboot {
 function main {
     switch($checkMode) {
         "prereboot" {
-            preReboot
-            shutdownVMs
+            $vms = preReboot
+            shutdownVMs -vms $vms
             rebootHyperVHost
 
             break;
@@ -70,9 +81,11 @@ function main {
             break;
         }
         default {
-            write-Output "Unknown option selected. Exiting Script."
+            Write-Host "Unknown option selected. Exiting Script."
         }
     }
 
     return 0
 }
+
+main
