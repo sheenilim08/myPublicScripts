@@ -1,3 +1,4 @@
+# NOTE: This script must be ran from SYSTEM
 $isWinREDisabled = (reagentc /info | find "Windows RE status").Contains("Disabled")
 
 if ($isWinREDisabled) {
