@@ -1,16 +1,17 @@
 try {
-    $monitoredProcessList = $env:monitoredProcessList_Param.ToString().Trim().Replace(" ", "");
+    $monitoredProcessList = $env:monitoredprocesslist_param.Trim().Replace(" ", "");
+    
 } catch {
     Write-Host "Script Failed. Exiting."
     Write-Host "An issue occured while parsing the process list to monitor."
     exit 2
 }
 
-$comparisonCondition = $env:comparisonCondition_Param
-$userSpace = $env:userSpace_Param
+$comparisonCondition = $env:comparisoncondition_param
+$userSpace = $env:userspace_param
 
 function main() {
-    $processes = $monitoredProcessList.split(",");
+    $processes = @($monitoredProcessList.split(","));
 
     $isThereError = $false;
 
@@ -34,16 +35,21 @@ function main() {
                             $isThereError = $true;
                         }
                     }
+                    default {
+                        Write-Host "Unknown Comparison Operator."
+                        exit 2
+                    }
                 }
             }
         } else {
-            Write-Output "The monitoring process $(process[$i]) is not running."
-            $isThereError = $true
+            Write-Output "The monitoring process $($process[$i]) is not running."
+            $isThereError = $true;
         }
     }
 
     if ($isThereError) {
-        Write-Host "`nMultiple processes has not satisfied the preferred condition."
+        Write-Host "Multiple processes has not satisfied the preferred condition."
+        Write-Host "Please Refer to Documentation. https://modo-networks-llc.itglue.com/1749534/docs/17156414"
         exit 1
     }
 }
