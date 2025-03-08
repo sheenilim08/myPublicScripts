@@ -9,6 +9,9 @@ try {
 
 $comparisonCondition = $env:comparisoncondition_param
 $userSpace = $env:userspace_param
+$startIfNotRunning = [System.Boolean]::Parse($env:start_if_not_running)
+$startUsername = $env:start_username
+$startPassword = $env:start_password
 
 function main() {
     $processes = @($monitoredProcessList.split(","));
@@ -43,7 +46,13 @@ function main() {
             }
         } else {
             Write-Output "The monitoring process $($process[$i]) is not running."
-            $isThereError = $true;
+
+            if ($startIfNotRunning) {
+                $Credential = New-Object System.Management.Automation.PSCredential $startUsername, (ConvertTo-SecureString $startPassword -AsPlainText -Force)
+                Start-Process -FilePath $processes[$i] -Credential $Credential
+            } else {
+                $isThereError = $true;
+            }
         }
     }
 
