@@ -19,10 +19,15 @@ function shutdownVMs {
     for ($i = 0; $i -lt $vms.Length; $i++) {
         Write-Host "Shutting down $($vms[$i].Name)"
         Stop-VM -Name "$($vms[$i].Name)" -Force
+
+        # Make sure the VM is properly powered down before moving on
+        # sometimes STOP-VM will finish runing while the VM is still in the process of shutting down.
+        Start-Sleep -Seconds 10 
     }
 }
-
+ 
 function rebootHyperVHost {
+    Write-Host "Rebooting HyperV Host"
     Restart-Computer
 }
 
@@ -34,7 +39,7 @@ function postReboot {
         return 1
     }
 
-    $postRebootVMStatus = Import-Csv -Path "C:\Windows\System32\Reboot-HyperV_vmList.csv"
+    $postRebootVMStatus = @(Import-Csv -Path "C:\Windows\System32\Reboot-HyperV_vmList.csv")
 
     $hasErrors = $false
 
