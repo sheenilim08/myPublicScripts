@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "managedAppName": {
+            "type": "String"
+        },
+        "managedResourceGroupId": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String"
+        },
+        "vmName": {
+            "type": "String"
+        },
+        "merakiAuthToken": {
+            "type": "String"
+        },
+        "virtualNetworkName": {
+            "type": "String"
+        },
+        "virtualNetworkAddressPrefix": {
+            "type": "String"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "String"
+        },
+        "subnetSDWANName": {
+            "type": "String"
+        },
+        "subnetSDWANPrefix": {
+            "type": "String"
+        },
+        "subnetPRODName": {
+            "type": "String"
+        },
+        "subnetPRODPrefix": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Solutions/applications",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('managedAppName')]",
+            "location": "[parameters('location')]",
+            "kind": "MarketPlace",
+            "plan": {
+                "name": "cisco-meraki-vmx",
+                "promotionCode": "",
+                "product": "cisco-meraki-vmx",
+                "publisher": "cisco",
+                "version": "18.2.11"
+            },
+            "properties": {
+                "managedResourceGroupId": "[parameters('managedResourceGroupId')]",
+                "parameters": {
+                    "lan": {
+                        "value": true
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vmName": {
+                        "value": "[parameters('vmName')]"
+                    },
+                    "merakiAuthToken": {
+                        "value": "[parameters('merakiAuthToken')]"
+                    },
+                    "zone": {
+                        "value": "0"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[parameters('virtualNetworkName')]"
+                    },
+                    "virtualNetworkNewOrExisting": {
+                        "value": "existing"
+                    },
+                    "virtualNetworkAddressPrefix": {
+                        "value": "[parameters('virtualNetworkAddressPrefix')]"
+                    },
+                    "virtualNetworkResourceGroup": {
+                        "value": "[parameters('virtualNetworkResourceGroup')]"
+                    },
+                    "virtualMachineSize": {
+                        "value": "Standard_F4s_v2"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetSDWANName')]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[parameters('subnetSDWANPrefix')]"
+                    },
+                    "subnet2Name": {
+                        "value": "[parameters('subnetPRODName')]"
+                    },
+                    "subnet2AddressPrefix": {
+                        "value": "[parameters('subnetPRODPrefix')]"
+                    },
+                    "adminUsername": {
+                        "value": "manage_with_meraki_dashboard"
+                    }
+                }
+            }
+        }
+    ]
+}
