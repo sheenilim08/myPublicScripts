@@ -165,7 +165,9 @@ function createSetRouteTable {
     )
 
     $route = New-AzRouteConfig -Name "Route-Google" -AddressPrefix "8.8.8.8/32" -NextHopType "VirtualAppliance" -NextHopIpAddress $payload.VMXLanNIC.IPConfigurations[0].PrivateIpAddress
-    New-AzRouteTable -Name "rt-TO-VMX" -ResourceGroupName $payload.ResourceGroupName -Location $payload.Location -Route $route
+    New-AzRouteTable -Name "rt-TO-VMX" -ResourceGroupName $payload.ResourceGroupName -Location $payload.Location -Route $route | Out-Null
+
+    return Get-AzRouteTable -Name "rt-TO-VMX" -ResourceGroupName $payload.ResourceGroupName
 }
 
 function main() {
@@ -241,11 +243,16 @@ function main() {
     $vmxNIC | Set-AzNetworkInterface # Apply and Refresh Network Interface
 
     # Create Empty UnAttached Route Table
-    createSetRouteTable -payload @{
+    $rt = createSetRouteTable -payload @{
         ResourceGroupName = $vmx_managed_rg.ResourceGroupName
         Location = $location
         VMXLanNIC = $vmxNIC
     }
+
+    Write-Host "Please add the routes that should be forwarded to the vMX on the Azure Route Table $($rt.Name)"
+    Write-Host "Azure Portal > Virtual Networks > Route Tables > $($rt.Name) > Settings > Routes."
+    Write-Host "You should be able to copy the next Hop IP Address for the Google-Route, then click Subnets and attach the Route table to the $($subnet_production.Name). Do not attach the route to $($subnet_sdwan.Name)."
+    Write-Host "This part (attaching the route table to the subnet) is deliberately skipped on the script because we cannot predict the future requirement of routing on every Organisation."
 }
 
 main
