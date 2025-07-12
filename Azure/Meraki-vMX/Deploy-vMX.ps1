@@ -117,7 +117,7 @@ function createSetNSG {
         [hashtable]$payload
     )
 
-    $nsg_existing = Get-AzNetworkSecurityGroup -Name $payload.Name -ResourceGroupName $payload.ResourceGroupName
+    $nsg_existing = Get-AzNetworkSecurityGroup -Name $payload.Name -ResourceGroupName $payload.ResourceGroupName -ErrorAction SilentlyContinue
     if ($null -ne $nsg_existing) {
         Write-Host "NSG $($payload.Name) already existing."
         return $nsg_existing
@@ -130,18 +130,42 @@ function createSetNSG {
 function createSetNSGRule {
     $ruleName = "vmxAllowAll"
 
-    $rule_existing = Get-AzNetworkSecurityRuleConfig -Name $ruleName
-    if ($null -ne $rule_existing) {
-        Write-Host "NSG Rule $($ruleName) already existing."
-        return $rule_existing
+    Write-Host "NSG Rule $($ruleName) is being created."
+    return New-AzNetworkSecurityRuleConfig -Name $ruleName -Description "Let vMX Firewall deal with the filtering." `
+        -Access Allow -Protocol * -Direction Inbound -Priority 100 -SourceAddressPrefix Internet `
+        -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
+}
+
+function deployManagedApp {
+    param([hashtable]$payload)
+
+    $managedApp_existing = Get-AzManagedApplication -ResourceGroup $payload.ResourceGroupName -Name $payload.Name -ErrorAction SilentlyContinue
+
+    if ($null -ne $managedApp_existing) {
+        Write-Host "Managed App $($payload.Name) already exist."
+        return $managedApp_existing
     }
 
-    Write-Host "NSG Rule $($ruleName) is being created."
-    New-AzNetworkSecurityRuleConfig -Name $ruleName -Description "Let vMX Firewall deal with the filtering." `
-        -Access Allow -Protocol * -Direction Inbound -Priority 100 -SourceAddressPrefix Internet `
-        -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange * | Out-Null
+    Write-Host "Deploying Managed App Cisco Meraki vMX - May take a few minutes to complete. Do not close this window."
+    Write-Host "You can check Azure Portal > Resource Group '$($payload.ResourceGroupName)' > Settings > Deployments for the deployment status."
 
-    return (Get-AzNetworkSecurityRuleConfig -Name $ruleName)
+    $templateFile = "template.json"
+    New-AzResourceGroupDeployment `
+        -Name $payload.Name `
+        -ResourceGroupName "$($payload.ResourceGroupName)" `
+        -TemplateFile $templateFile `
+        -TemplateParameterObject $payload.TemplateParams | Out-Null
+
+    return Get-AzManagedApplication -ResourceGroup $payload.ResourceGroupName -Name $payload.Name
+}
+
+function createSetRouteTable {
+    param(
+        [hashtable]$payload
+    )
+
+    $route = New-AzRouteConfig -Name "Route-Google" -AddressPrefix "8.8.8.8/32" -NextHopType "VirtualAppliance" -NextHopIpAddress $payload.VMXLanNIC.IPConfigurations[0].PrivateIpAddress
+    New-AzRouteTable -Name "rt-TO-VMX" -ResourceGroupName $payload.ResourceGroupName -Location $payload.Location -Route $route
 }
 
 function main() {
@@ -170,9 +194,8 @@ function main() {
     };
 
     Write-Host "Accepting Azure Market Place EULA - Cisco Meraki VMX"
-    Set-AzMarketplaceTerms -Accept -Name "cisco-meraki-vmx" -Product "cisco-meraki-vmx" -Publisher "cisco"
-
-    $templateFile = "template.json" 
+    Set-AzMarketplaceTerms -Accept -Name "cisco-meraki-vmx" -Product "cisco-meraki-vmx" -Publisher "cisco" | Out-Null
+    
     $managedResourceGroupId = "/subscriptions/$($subscriptionId)/resourceGroups/managed-$($vmx_managed_rg.ResourceGroupName)"   
 
     $appName = "app-$($vmx_rg.ResourceGroupName)"
@@ -196,15 +219,11 @@ function main() {
     # Write-Host "Wait 30 seconds for resources to propagate to Azure System."
     # Start-Sleep -Seconds 30
 
-    Write-Host "Deploying Managed App Cisco Meraki vMX - May take a few minutes to complete. Do not close this window."
-    Write-Host "You can check Azure Portal > Resource Group '$($vmx_managed_rg.ResourceGroupName)' > Settings > Deployments for the deployment status."
-
-    New-AzResourceGroupDeployment `
-        -Name $appName `
-        -ResourceGroupName "$($vmx_managed_rg.ResourceGroupName)" `
-        -TemplateFile $templateFile `
-        -TemplateParameterObject $templateParams
-
+    $managedApp = deployManagedApp -payload @{
+        Name = $appName
+        ResourceGroupName = $vmx_managed_rg.ResourceGroupName
+        TemplateParams = $templateParams
+    }
 
     # Create NSG
     $nsg_rule_allowAll = createSetNSGRule
@@ -216,8 +235,17 @@ function main() {
     }
 
     # Apply NSG To Managed VM Nic WAN interface
-    $interfaceName = "$($vmxVMName)WANInterface"
+    Write-Host "Applying NSG to $($vmxVMName)'s $($vmxVMName)WANInterface NIC."
+    $vmxNIC = Get-AzNetworkInterface -Name "$($vmxVMName)WANInterface" -ResourceGroup "managed-$($vmx_managed_rg.ResourceGroupName)"
+    $vmxNIC.NetworkSecurityGroup = $nsg
+    $vmxNIC | Set-AzNetworkInterface # Apply and Refresh Network Interface
 
+    # Create Empty UnAttached Route Table
+    createSetRouteTable -payload @{
+        ResourceGroupName = $vmx_managed_rg.ResourceGroupName
+        Location = $location
+        VMXLanNIC = $vmxNIC
+    }
 }
 
 main
