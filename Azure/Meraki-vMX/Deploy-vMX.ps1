@@ -73,7 +73,7 @@ function createSetRG {
         return $rg_existing
     }
     Write-Host "Resource Group $($payload.name) is being created."
-    return @(New-AzResourceGroup @payload)[0]
+    return New-AzResourceGroup @payload
 }
 
 function createSetVNet {
@@ -89,7 +89,7 @@ function createSetVNet {
     }
 
     Write-Host "VNet $($payload.name) - $($payload.addressPrefix) is being created."
-    return @(New-AzVirtualNetwork @payload)[0]
+    return New-AzVirtualNetwork @payload
 }
 
 function createSetSubnet {
@@ -105,11 +105,11 @@ function createSetSubnet {
     }
 
     Write-Host "Subnet $($payload.name) - $($payload.addressPrefix) is being created."
-    $returnValue = Add-AzVirtualNetworkSubnetConfig @payload
+    Add-AzVirtualNetworkSubnetConfig @payload | Out-Null
 
-    $payload.VirtualNetwork | Set-AzVirtualNetwork # refresh Virtual Network Configuration to reflect Subnets
+    $payload.VirtualNetwork | Set-AzVirtualNetwork | Out-Null # refresh Virtual Network Configuration to reflect Subnets
 
-    return $returnValue
+    return Get-AzVirtualNetworkSubnetConfig -Name $payload.name -VirtualNetwork $payload.VirtualNetwork
 }
 
 function main() {
@@ -148,7 +148,7 @@ function main() {
 
     $templateParams = @{
         managedResourceGroupId = $managedResourceGroupId
-        managedAppName = "app-$($vmx_rg.ResourceGroupName)"
+        managedAppName = $appName
         location = $location
         vmName = $vmxVMName
         merakiAuthToken = $merakiAuthToken
@@ -161,14 +161,14 @@ function main() {
         subnetPRODPrefix = $vmx_subnet_production.AddressPrefix[0]
     }
 
-    Write-Host "Wait 30 seconds for resources to propagate to Azure System."
-    Start-Sleep -Seconds 30
+    # Write-Host "Wait 30 seconds for resources to propagate to Azure System."
+    # Start-Sleep -Seconds 30
 
     Write-Host "Deploying Managed App Cisco Meraki vMX - May take a few minutes to complete. Do not close this window."
     Write-Host "You can check Azure Portal > Resource Group '$($vmx_managed_rg.ResourceGroupName)' > Settings > Deployments for the deployment status."
 
     New-AzResourceGroupDeployment `
-        -Name "app-$($vmx_rg.ResourceGroupName)" `
+        -Name $appName `
         -ResourceGroupName "$($vmx_managed_rg.ResourceGroupName)" `
         -TemplateFile $templateFile `
         -TemplateParameterObject $templateParams
