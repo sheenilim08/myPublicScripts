@@ -112,6 +112,38 @@ function createSetSubnet {
     return Get-AzVirtualNetworkSubnetConfig -Name $payload.name -VirtualNetwork $payload.VirtualNetwork
 }
 
+function createSetNSG {
+    param(
+        [hashtable]$payload
+    )
+
+    $nsg_existing = Get-AzNetworkSecurityGroup -Name $payload.Name -ResourceGroupName $payload.ResourceGroupName
+    if ($null -ne $nsg_existing) {
+        Write-Host "NSG $($payload.Name) already existing."
+        return $nsg_existing
+    }
+
+    New-AzNetworkSecurityGroup -ResourceGroupName $payload.ResourceGroupName -Location $payload.Location -Name $payload.Name -SecurityRules $payload.Rule | Out-Null
+    return Get-AzNetworkSecurityGroup -Name $payload.Name -ResourceGroupName $payload.ResourceGroupName
+}
+
+function createSetNSGRule {
+    $ruleName = "vmxAllowAll"
+
+    $rule_existing = Get-AzNetworkSecurityRuleConfig -Name $ruleName
+    if ($null -ne $rule_existing) {
+        Write-Host "NSG Rule $($ruleName) already existing."
+        return $rule_existing
+    }
+
+    Write-Host "NSG Rule $($ruleName) is being created."
+    New-AzNetworkSecurityRuleConfig -Name $ruleName -Description "Let vMX Firewall deal with the filtering." `
+        -Access Allow -Protocol * -Direction Inbound -Priority 100 -SourceAddressPrefix Internet `
+        -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange * | Out-Null
+
+    return (Get-AzNetworkSecurityRuleConfig -Name $ruleName)
+}
+
 function main() {
     $vmx_rg = createSetRG -payload $rg
     $vmx_vnet = createSetVNet -payload $vnet
@@ -172,6 +204,20 @@ function main() {
         -ResourceGroupName "$($vmx_managed_rg.ResourceGroupName)" `
         -TemplateFile $templateFile `
         -TemplateParameterObject $templateParams
+
+
+    # Create NSG
+    $nsg_rule_allowAll = createSetNSGRule
+    $nsg = createSetNSG -payload @{
+        Name = "nsg-$($vmxVMName)"
+        Rule = $nsg_rule_allowAll
+        ResourceGroupName = $vmx_managed_rg.ResourceGroupName
+        Location = $location
+    }
+
+    # Apply NSG To Managed VM Nic WAN interface
+    $interfaceName = "$($vmxVMName)WANInterface"
+
 }
 
 main
