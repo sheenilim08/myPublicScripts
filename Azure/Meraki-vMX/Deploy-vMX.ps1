@@ -171,6 +171,8 @@ function createSetRouteTable {
 }
 
 function main() {
+    Set-AzContext -Subscription $subscriptionId
+
     $vmx_rg = createSetRG -payload $rg
     $vmx_vnet = createSetVNet -payload $vnet
 
