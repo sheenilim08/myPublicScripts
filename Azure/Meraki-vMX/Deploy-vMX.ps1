@@ -132,7 +132,7 @@ function createSetNSGRule {
 
     Write-Host "NSG Rule $($ruleName) is being created."
     return New-AzNetworkSecurityRuleConfig -Name $ruleName -Description "Let vMX Firewall deal with the filtering." `
-        -Access Allow -Protocol * -Direction Inbound -Priority 100 -SourceAddressPrefix Internet `
+        -Access Allow -Protocol * -Direction Inbound -Priority 100 -SourceAddressPrefix Any `
         -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
 }
 
@@ -239,8 +239,8 @@ function main() {
     }
 
     # Apply NSG To Managed VM Nic WAN interface
-    Write-Host "Applying NSG to $($vmxVMName)'s $($vmxVMName)WANInterface NIC."
-    $vmxNIC = Get-AzNetworkInterface -Name "$($vmxVMName)WANInterface" -ResourceGroup "managed-$($vmx_managed_rg.ResourceGroupName)"
+    Write-Host "Applying NSG to $($vmxVMName)'s $($vmxVMName)LANInterface NIC."
+    $vmxNIC = Get-AzNetworkInterface -Name "$($vmxVMName)LANInterface" -ResourceGroup "managed-$($vmx_managed_rg.ResourceGroupName)"
     $vmxNIC.NetworkSecurityGroup = $nsg
     $vmxNIC | Set-AzNetworkInterface # Apply and Refresh Network Interface
 
