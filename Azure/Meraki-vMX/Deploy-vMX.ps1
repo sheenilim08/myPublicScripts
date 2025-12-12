@@ -239,8 +239,8 @@ function main() {
     }
 
     # Apply NSG To Managed VM Nic WAN interface
-    Write-Host "Applying NSG to $($vmxVMName)'s $($vmxVMName)LANInterface NIC."
-    $vmxNIC = Get-AzNetworkInterface -Name "$($vmxVMName)LANInterface" -ResourceGroup "managed-$($vmx_managed_rg.ResourceGroupName)"
+    Write-Host "Applying NSG to $($vmxVMName)'s $($vmxVMName)WANInterface NIC."
+    $vmxNIC = Get-AzNetworkInterface -Name "$($vmxVMName)WANInterface" -ResourceGroup "managed-$($vmx_managed_rg.ResourceGroupName)"
     $vmxNIC.NetworkSecurityGroup = $nsg
     $vmxNIC | Set-AzNetworkInterface # Apply and Refresh Network Interface
 
@@ -248,7 +248,7 @@ function main() {
     $rt = createSetRouteTable -payload @{
         ResourceGroupName = $vmx_managed_rg.ResourceGroupName
         Location = $location
-        VMXLanNIC = $vmxNIC
+        VMXLanNIC = Get-AzNetworkInterface -Name "$($vmxVMName)LANInterface"
     }
 
     Write-Host "Please add the routes that should be forwarded to the vMX on the Azure Route Table $($rt.Name)"
