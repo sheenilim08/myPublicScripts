@@ -1,12 +1,32 @@
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+Install-PackageProvider `
+  -Name NuGet `
+  -MinimumVersion 2.8.5.201 `
+  -Force `
+  -Confirm:$false
+
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+$hostPSVersion = Get-Host
+
+if ($hostPSVersion.Major -ne 5) {
+    Write-Host "This script is only tested to work with PowerShell 5 and is observed to be having issues with other versions. If you see this message, the script might fail."
+}
+
+Enable-PSRemoting -Force
+
 $dsmModule = Get-Module 'PSDscResources' -ErrorAction SilentlyContinue
 
 if ($null -eq $dsmModule) {
     Write-Host "Installing PSDscResources Module"
-    Install-Module -Name "PSDscResources" -Force
+    Install-Module -Name "PSDscResources" -Force -Confirm:$false
 }
 
+Write-Host "Importing PSDscResources Module"
 Import-Module -Name "PSDscResources" -Force
 
+Write-Host "Creating DSC Configuration"
 [DSCLocalConfigurationManager()]
 Configuration SetAutoCorrectMode {
     Node "localhost" {
@@ -24,6 +44,7 @@ SetAutoCorrectMode
 Write-Host "Applying .\SetAutoCorrectMode\localhost.mof Configuration."
 Set-DscLocalConfigurationManager -Path .\SetAutoCorrectMode -Verbose
 
+Write-Host "Creating DSC Configuration."
 Configuration ModoNinjaService {
     Import-DSCResource -Name Service
     Node localhost
